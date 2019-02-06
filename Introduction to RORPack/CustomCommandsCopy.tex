@@ -1,0 +1,306 @@
+%\ProvidesPackage{CustomCommands}
+
+\usepackage{ifthen}
+\newcommand*{\keyterm}[1]{\emph{#1}}% Math Operators
+\DeclareMathOperator{\re}{Re}			% Real Part
+\DeclareMathOperator{\im}{Im}			% Imaginary Part
+\DeclareMathOperator*{\Res}{Res}		% Residue
+\DeclareMathOperator{\rank}{rank}		% Rank
+\DeclareMathOperator{\diag}{diag}		% Diagonal
+\DeclareMathOperator{\Tr}{Tr}			% Trace
+\DeclareMathOperator{\adj}{adj}		% Classical Adjoint
+\DeclareMathOperator{\spr}{spr}		% Spectral Radius
+\DeclareMathOperator{\Span}{span}		% Span
+\DeclareMathOperator{\Gr}{Gr}			% Graph of a mapping
+\DeclareMathOperator*{\lcm}{lcm}         % Least Common Multiple
+\DeclareMathOperator{\supp}{supp}        % Support
+%\DeclareMathOperator{\ran}{ran}          % Range
+\newcommand{\ran}{\mathcal{R}}						% Range
+\renewcommand{\ker}{\mathcal{N}}					% Null space
+\DeclareMathOperator*{\essup}{ess\,sup}  % Essential Supremum
+\DeclareMathOperator*{\vrai}{vrai}
+\DeclareMathOperator*{\wlim}{w-lim}      % Weak Limit
+\DeclareMathOperator*{\slim}{s-lim}      % Strong Limit
+\DeclareMathOperator*{\ulim}{u-lim}      % Uniform Limit
+\DeclareMathOperator*{\dist}{dist}       % Distance between sets
+\DeclareMathOperator*{\diam}{diam}       % Diameter of a set
+\DeclareMathOperator*{\card}{card}       % Cardinality of a set
+\DeclareMathOperator{\codim}{codim}			 % Co-dimension
+\DeclareMathOperator{\alg}{alg}					% Algebraic multiplicity
+\DeclareMathOperator{\geom}{geom}					% Geometric multiplicity
+\DeclareMathOperator{\sinc}{sinc}
+%\DeclareMathOperator{\Arg}{Arg} 	% Principal argument
+
+% Elementary functions
+% Names starting with capital letters are principal branches.
+\DeclareMathOperator{\Arg}{Arg}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\Ln}{Ln}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\Arcsin}{Arcsin}
+\DeclareMathOperator{\Arccos}{Arccos}
+\DeclareMathOperator{\Arctan}{Arctan}
+\DeclareMathOperator{\Arccot}{Arccot}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arccosh}{arccosh}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\arccoth}{arccoth}
+\DeclareMathOperator{\Arcsinh}{Arcsinh}
+\DeclareMathOperator{\Arccosh}{Arccosh}
+\DeclareMathOperator{\Arctanh}{Arctanh}
+\DeclareMathOperator{\Arccoth}{Arccoth}
+
+\DeclareMathOperator{\sign}{sign}
+
+% Direct and orthogonal sums
+\newcommand{\dirsum}{\oplus}
+\newcommand{\orthsum}{\oplus_{\hspace{-1pt}\raisebox{-1pt}{\mbox{\scriptsize$\bm{\perp}$}}\hspace{-2pt}}}
+
+
+% Variable size delimiters.
+% The first argument is the size: big, bigg, etc.
+% The second argument is the delimiter: \{, [, (, etc.
+\newcommand*{\ldelim}[2]{\csname#1l\endcsname#2}   % Left
+\newcommand*{\rdelim}[2]{\csname#1r\endcsname#2}   % Right
+\newcommand*{\mdelim}[2]{\csname#1m\endcsname#2}   % Middle
+
+% Horizontal space the amount of a relational symbol
+\newcommand*{\relspace}[1][=]{\mathrel{\phantom{#1}}}
+% Raise a superscript
+\newcommand*{\raisesp}[2]{\raisebox{#1}{\mbox{$\scriptstyle#2$}}}
+
+% Greek letters
+\newcommand{\ga}{\alpha}
+\newcommand{\gb}{\beta}
+\newcommand{\gc}{\chi}
+\renewcommand{\gg}{\gamma}
+\newcommand{\gd}{\delta}
+\newcommand{\gf}{\varphi}
+\newcommand{\gl}{\lambda}
+\newcommand{\gw}{\omega}
+\newcommand{\gs}{\sigma}
+\newcommand{\gth}{\theta}
+\newcommand{\gt}{\tau}
+\newcommand{\gz}{\zeta}
+\newcommand{\eps}{\varepsilon}
+
+% Symbols
+\newcommand*{\C}{{\mathbb{C}}}     % Complex
+\newcommand*{\Cp}{{\mathbb{C}^+}}
+\newcommand*{\R}{{\mathbb{R}}}     % Real
+\newcommand*{\Q}{{\mathbb{Q}}}     % Rational
+\newcommand*{\Z}{{\mathbb{Z}}}     % Integer
+\newcommand*{\N}{{\mathbb{N}}}     % Natural
+
+% Upright letters
+
+\newcommand*{\me}{{\mathrm{e}}}
+\newcommand*{\mi}{{\mathrm{i}}}
+\newcommand*{\md}{{\mathrm{d}}}
+\newcommand*{\mD}{{\mathrm{D}}}
+\newcommand*{\minsv}{\sigma_{\textnormal{min}}}   % Minimum singular value
+\newcommand*{\maxsv}{\sigma_{\textnormal{max}}}   % Maximum singular value
+\newcommand*{\Lin}{{\mathcal{L}}}   % Bounded Linear Operators
+\newcommand*{\Clo}{\mathcal{C}}     % Closed Linear Operators
+\newcommand*{\Comp}{\mathcal{K}}		% Compact Linear Operators
+\newcommand*{\Dom}{{\mathcal{D}}}   % Domain
+\newcommand*{\Ran}{{\mathcal{R}}}   % Range
+\newcommand*{\Nul}{{\mathcal{N}}}   % Nullspace
+\newcommand*{\Contr}{{\mathcal{B}}} % Controllability map
+\newcommand*{\Obser}{{\mathcal{C}}} % Observability map
+
+% Fixed size absolute value etc.
+\newcommand*{\abs} [1]{\lvert#1\rvert}
+\newcommand*{\norm}[1]{\lVert#1\rVert}
+\newcommand*{\seminorm}[1]{\abs{#1}}
+\newcommand*{\set} [1]{\{#1\}}
+\newcommand*{\setm}[2]{\{\,#1\mid#2\,\}}   % Set with middle |
+\newcommand*{\iprod}[2]{\langle#1,#2\rangle}    % Inner Product
+\newcommand*{\dualpair}[2]{\langle#1,#2\rangle}
+\newcommand*{\pair}[2]{\left(#1,#2\right)} % Ordered pair
+\newcommand*{\conv}[2]{#1\ast#2}
+\newcommand*{\seq}[2]{(#1)_{#2}^\infty}  % Sequence
+\newcommand*{\seqn}[2][]{(#2)_{#1}}      % Sequence
+\newcommand*{\ceil} [1]{\lceil#1\rceil}
+\newcommand*{\floor}[1]{\lfloor#1\rfloor}
+\newcommand*{\bin}[2]{\left(\mat{#1\\#2}\right)}
+
+% Variable size absolute value etc.
+% The optional first argument is the size: big, bigg, etc.
+% The default is to use automatic sizing with \left and \right.
+\newcommand*{\Abs}[2][default]{\ifthenelse{\equal{#1}{default}}{\left\lvert#2\right\rvert}{\ldelim{#1}{\lvert}#2\rdelim{#1}{\rvert}}}
+\newcommand*{\Norm}[2][default]{\ifthenelse{\equal{#1}{default}}{\left\lVert#2\right\rVert}{\ldelim{#1}{\lVert}#2\rdelim{#1}{\rVert}}}
+\newcommand*{\Seminorm}[2][default]{\Abs[#1]{#2}}
+\newcommand*{\Iprod}[3][default]{\ifthenelse{\equal{#1}{default}}{\left\langle#2,#3\right\rangle}{\ldelim{#1}{\langle}#2,#3\rdelim{#1}{\rangle}}}
+\newcommand*{\Dualpair}[3][default]{\ifthenelse{\equal{#1}{default}}{\left\langle#2,#3\right\rangle}{\ldelim{#1}{\langle}#2,#3\rdelim{#1}{\rangle}}}
+\newcommand*{\Seq}[2]{\left(#1\right)_{#2}^\infty}
+\newcommand*{\Seqn}[2][]{\left(#2\right)_{#1}}
+\newcommand*{\List}[2][1]{\set{#1,\ldots,#2}}
+
+% Set
+% Variable size braces.
+% The optional first argument is the size: big, bigg, etc.% The default is to use automatic sizing with \left and \right.
+\newcommand*{\Set}[2][default]{\ifthenelse{\equal{#1}{default}}{\left\{#2\right\}}{\ldelim{#1}{\{}#2\rdelim{#1}{\}}}}
+
+% Set with middle
+% Variable size braces and |.
+% The optional first argument is the size: big, bigg, etc.
+% The default is big.
+\newcommand*{\Setm}[3][big]{\ldelim{#1}{\{}\,#2\mdelim{#1}{|}#3\,\rdelim{#1}{\}}}
+
+% Partial Derivative
+%\newcommand*{\dd}[1][x]{\frac{d}{d#1}}
+\newcommand*{\dda}[3][1]{\ifthenelse{\equal{#1}{1}}{\frac{d#3}{d#2}}{\frac{d^{#1}#3}{d#2^{#1}}}}
+\newcommand*{\ddb}[2][1]{\ifthenelse{\equal{#1}{1}}{\frac{d}{d#2}}{\frac{d^{#1}}{d#2^{#1}}}}
+\newcommand*{\pd}[3][1]{\ifthenelse{\equal{#1}{1}}{\frac{\partial{#2}}{\partial{#3}}}{\frac{\partial^{#1}{#2}}{\partial#3^{#1}}}}
+\newcommand*{\pdb}[2][1]{\ifthenelse{\equal{#1}{1}}{\frac{\partial}{\partial{#2}}}{\frac{\partial^{#1}}{\partial#2^{#1}}}}
+\newcommand*{\pdd}[3]{\frac{\partial^2{#1}}{\partial{#2}\partial{#3}}}
+% Substitution (in integral)
+\newcommand{\subst}{\bigg\lvert}
+% Matrix
+\newcommand{\Matrix}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\Det}[1]{\begin{vmatrix}#1\end{vmatrix}}
+\newcommand{\Array}[2]{\left[\begin{array}{#1}#2\end{array}\right]}
+
+% Complex Conjugate, Closure, Boundary, Complement
+\newcommand*{\conj}[1]{\overline{#1}}
+\newcommand*{\closure}[1]{\overline{#1}}
+\newcommand{\boundary}{\partial}
+\newcommand*{\Complement}{\mathord{\thicksim}}
+
+% Limits from the left and right
+\newcommand{\lto}{\uparrow}
+\newcommand{\rto}{\downarrow}
+\newcommand*{\limn}[1][n]{\lim_{#1\to\infty}}
+
+% Arrows (abbreviations)
+%\newcommand{\to}{\rightarrow}
+\newcommand{\from}{\leftarrow}
+\newcommand{\too}{\longrightarrow}
+\newcommand{\tofrom}{\leftrightarrow}
+\newcommand{\froom}{\longleftarrow}
+\newcommand{\To}{\Rightarrow}
+\newcommand{\From}{\Leftarrow}
+
+% Algebra
+\newcommand*{\semigroup}[1]{\mathcal{#1}}
+\newcommand*{\monoid}[1]{\mathcal{#1}}
+\newcommand*{\group}[1]{\mathcal{#1}}
+\newcommand*{\ring}[1]{\mathcal{#1}}
+\newcommand*{\field}[1]{\mathbb{#1}}
+\newcommand*{\divides} [2]{{#1}|{#2}}
+\newcommand*{\rdivides}[2]{{#1}|_R\,{#2}}
+\newcommand*{\ldivides}[2]{{#1}|_L\,{#2}}
+
+% Misc
+\newcommand*{\Xloc}[1]{#1_{\text{loc}}}
+\newcommand*{\Lploc}[1][p]{\Xloc{L^{#1}}}
+\newcommand*{\Lp}[1][p]{L^{#1}}
+\newcommand*{\lp}[1][p]{\ell^{#1}}
+\newcommand*{\half}[1][2]{\frac{1}{#1}}
+\newcommand*{\range}[3][i]{{#2}\le{#1}\le{#3}}
+\newcommand*{\cartesian}{\text{\Large $\times$}}
+\newcommand*{\inverse}{^{-1}}
+\newcommand*{\inv}{^{-1}}
+\newcommand{\pinv}{^{\dagger}}
+
+
+%\renewcommand{\vec}[1]{\mathbf{#1}}
+\renewcommand{\vec}[1]{\underline{#1}}
+
+% Referencing Sections, Theorems etc.
+\newcommand*{\refCh}[1]{Chapter~\ref{#1}}        % Chapter
+\newcommand*{\refch}[1]{chapter~\ref{#1}}        % lower case
+\newcommand*{\refSec}[1]{Section~\ref{#1}}       % Section
+\newcommand*{\refsec}[1]{section~\ref{#1}}       % 
+\newcommand*{\refFig}[1]{Figure~\ref{#1}}        % Figure
+\newcommand*{\reffig}[1]{figure~\ref{#1}}        % 
+\newcommand*{\refTbl}[1]{Table~\ref{#1}}         % Table
+\newcommand*{\refThm}[1]{Theorem~\ref{#1}}       % Theorem
+\newcommand*{\refthm}[1]{theorem~\ref{#1}}       % 
+\newcommand*{\refPrp}[1]{Proposition~\ref{#1}}   % Proposition
+\newcommand*{\refprp}[1]{proposition~\ref{#1}}   % 
+\newcommand*{\refLem}[1]{Lemma~\ref{#1}}         % Lemma
+\newcommand*{\reflem}[1]{lemma~\ref{#1}}         % 
+\newcommand*{\refCor}[1]{Corollary~\ref{#1}}     % Corollary
+\newcommand*{\refcor}[1]{corollary~\ref{#1}}     % 
+\newcommand*{\refDef}[1]{Definition~\ref{#1}}    % Definition
+\newcommand*{\refdef}[1]{definition~\ref{#1}}    % 
+\newcommand*{\refRem}[1]{Remark~\ref{#1}}	 % Remark			 % Remark
+\newcommand*{\refrem}[1]{remark~\ref{#1}}	 %			 % 
+\newcommand*{\refPro}[1]{Problem~\ref{#1}}       % Problem
+\newcommand*{\refExa}[1]{Example~\ref{#1}}       % Example
+\newcommand*{\refexa}[1]{example~\ref{#1}}       % 
+\newcommand*{\refExe}[1]{Exercise~\ref{#1}}      % Exercise
+\newcommand*{\refEq}[1]{Equation~\eqref{#1}}     % Equation
+%\newcommand*{\refeq}[1]{equation~\eqref{#1}}     % 
+\newcommand*{\refEqs}[1]{Equations~\eqref{#1}}   % Equations
+\newcommand*{\refeqs}[1]{equations~\eqref{#1}}   % 
+\newcommand*{\refAss}[1]{Assumption~\ref{#1}}    % Assumption
+\newcommand*{\refass}[1]{assumption~\ref{#1}}    % 
+
+\DeclareMathOperator*{\AP}{AP}	% Almost periodic functions
+\DeclareMathOperator*{\BUC}{BUC}	% BUC functions
+
+\newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\bmatsmall}[1]{\begin{bsmallmatrix}#1\end{bsmallmatrix}}
+\newcommand{\pmat}[1]{\begin{pmatrix}#1\end{pmatrix}}
+\newcommand{\pmatsmall}[1]{\begin{psmallmatrix}#1\end{psmallmatrix}}
+\newcommand{\mat}[1]{\begin{matrix}#1\end{matrix}}
+\newcommand{\mresult}[1]{\left\{\begin{array}{ll}#1\end{array}\right.}
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\wt}[1]{\widetilde{#1}}
+\newcommand{\Csg}{$C_0$-semigroup}
+\newcommand{\Cg}{$C_0$-group}
+
+
+\newcommand{\eq}[1]{\begin{align*}#1\end{align*}}
+\newcommand{\eqn}[1]{\begin{align}#1\end{align}}
+\newcommand{\ieq}[1]{$#1$}
+
+% Title for notes
+\newcommand{\owntitle}[2][\today]{
+\clearpage
+\begin{center}
+{\LARGE #2 \par}
+\end{center}
+\centerline{\large #1}
+}
+
+% Title for notes with author (\owntitleauth[date]{author}{title})
+\newcommand{\owntitleauth}[3][\today]{
+\clearpage
+\begin{center}
+{\LARGE #3 \par}
+\bigskip
+{\large #2}
+\end{center}
+\centerline{\large #1}
+}
+
+% Hide proofs. 
+% Usage:
+%\newboolean{hideproof}
+%\setboolean{hideproof}{true}
+%\begin{proof}\hiddenproof{\boolean{hideproof}}{[proof...]}\end{proof}
+
+\newcommand{\hiddenproof}[2]{
+\ifthenelse{#1}{Hidden}{#2}
+}
+
+% Cite with a location or a theorem number
+\newcommand{\citel}[2]{\cite[#2]{#1}}
+
+\newcommand{\longcomm}[1]{}
+
+% Color macros
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\purple}[1]{{\color{purple}#1}}
+\newcommand{\green}[1]{{\color{green}#1}}
+
+
+\usepackage{datetime}
+\newdateformat{findate}{\THEDAY.\THEMONTH.\THEYEAR}
+
+\endinput 

@@ -1,0 +1,256 @@
+\begin{thebibliography}{10}
+
+\bibitem{BorTom10}
+Alexander Borichev and Yuri Tomilov.
+\newblock Optimal polynomial decay of functions and operator semigroups.
+\newblock {\em Math. Ann.}, 347(2):455--478, 2010.
+
+\bibitem{BouIdr09}
+S.~Boulite, A.~Idrissi, and A.~Ould~Maaloum.
+\newblock Robust multivariable {PI}-controllers for linear systems in {B}anach
+  state spaces.
+\newblock {\em J. Math. Anal. Appl.}, 349(1):90--99, 2009.
+
+\bibitem{ByrIsi03}
+C.~I. Byrnes and A.~Isidori.
+\newblock Limit sets, zero dynamics, and internal models in the problem of
+  nonlinear output regulation.
+\newblock {\em IEEE Trans. Automat. Control}, 48(10):1712--1723, 2003.
+
+\bibitem{ByrIsi04}
+C.~I. Byrnes and A.~Isidori.
+\newblock Nonlinear internal models for output regulation.
+\newblock {\em IEEE Trans. Automat. Control}, 49(12):2244--2247, 2004.
+
+\bibitem{ByrLau00}
+Christopher~I. Byrnes, Istv{\'a}n~G. Lauk{\'o}, David~S. Gilliam, and Victor~I.
+  Shubov.
+\newblock Output regulation problem for linear distributed parameter systems.
+\newblock {\em IEEE Trans. Automat. Control}, 45(12):2236--2252, 2000.
+
+\bibitem{ByrGil02}
+C.I. Byrnes, D.S. Gilliam, V.I. Shubov, and G.~Weiss.
+\newblock Regular linear systems governed by a boundary controlled heat
+  equation.
+\newblock {\em Journal of Dynamical and Control Systems}, 8(3):341--370, 2002.
+
+\bibitem{CurZwa95book}
+Ruth~F. Curtain and Hans~J. Zwart.
+\newblock {\em An Introduction to Infinite-Dimensional Linear Systems Theory}.
+\newblock Springer-Verlag, New York, 1995.
+
+\bibitem{Dav76}
+Edward~J. Davison.
+\newblock The robust control of a servomechanism problem for linear
+  time-invariant multivariable systems.
+\newblock {\em IEEE Trans. Automat. Control}, 21(1):25--34, 1976.
+
+\bibitem{Deu11}
+Joachim Deutscher.
+\newblock Output regulation for linear distributed-parameter systems using
+  finite-dimensional dual observers.
+\newblock {\em Automatica J. IFAC}, 47(11):2468--2473, 2011.
+
+\bibitem{DosBas08}
+V.~Dos~Santos, G.~Bastin, J.-M. Coron, and B.~d'Andr\'{e}a Novel.
+\newblock Boundary control with integral action for hyperbolic systems of
+  conservation laws: stability and experiments.
+\newblock {\em Automatica J. IFAC}, 44(5):1310--1318, 2008.
+
+\bibitem{DriHal14book}
+T.~A Driscoll, N.~Hale, and L.~N. Trefethen.
+\newblock {\em Chebfun Guide}.
+\newblock Pafnuty Publications, 2014.
+
+\bibitem{FraWon75a}
+B.~A. Francis and W.~M. Wonham.
+\newblock The internal model principle for linear multivariable regulators.
+\newblock {\em Appl. Math. Optim.}, 2(2):170--194, 1975.
+
+\bibitem{HamPoh96a}
+Timo H{\"a}m{\"a}l{\"a}inen and Seppo Pohjolainen.
+\newblock Robust control and tuning problem for distributed parameter systems.
+\newblock {\em Internat. J. Robust Nonlinear Control}, 6(5):479--500, 1996.
+
+\bibitem{HamPoh00}
+Timo H{\"a}m{\"a}l{\"a}inen and Seppo Pohjolainen.
+\newblock A finite-dimensional robust controller for systems in the
+  {CD}-algebra.
+\newblock {\em IEEE Trans. Automat. Control}, 45(3):421--431, 2000.
+
+\bibitem{HamPoh10}
+Timo H{\"a}m{\"a}l{\"a}inen and Seppo Pohjolainen.
+\newblock Robust regulation of distributed parameter systems with
+  infinite-dimensional exosystems.
+\newblock {\em SIAM J. Control Optim.}, 48(8):4846--4873, 2010.
+
+\bibitem{HamPoh11}
+Timo H{{\"a}}m{{\"a}}l{{\"a}}inen and Seppo Pohjolainen.
+\newblock A self-tuning robust regulator for infinite-dimensional systems.
+\newblock {\em IEEE Trans. Automat. Control}, 56(9):2116--2127, 2011.
+
+\bibitem{Hua04book}
+Jie Huang.
+\newblock {\em Nonlinear Output Regulation, Theory and Applications}.
+\newblock SIAM, Philadelphia, 2004.
+
+\bibitem{HumKur18}
+Jukka-Pekka Humaloja, Mikael Kurula, and Lassi Paunonen.
+\newblock Robust output regulation for wave equations with boundary control.
+\newblock {\em in review}.
+
+\bibitem{HumPau18}
+Jukka-Pekka Humaloja and Lassi Paunonen.
+\newblock Robust regulation of infinite-dimensional port-{H}amiltonian systems.
+\newblock {\em IEEE Transactions on Automatic Control}, 63(5):1480--1486, 2018.
+
+\bibitem{Imm06phd}
+Eero Immonen.
+\newblock {\em State Space Output Regulation Theory for Infinite-Dimensional
+  Linear Systems and Bounded Uniformly Continuous Exogenous Signals}.
+\newblock PhD thesis, Tampere University of Technology, 2006.
+
+\bibitem{Imm07a}
+Eero Immonen.
+\newblock On the internal model structure for infinite-dimensional systems:
+  {T}wo common controller types and repetitive control.
+\newblock {\em SIAM J. Control Optim.}, 45(6):2065--2093, 2007.
+
+\bibitem{ImmPoh06b}
+Eero Immonen and Seppo Pohjolainen.
+\newblock Feedback and feedforward output regulation of bounded uniformly
+  continuous signals for infinite-dimensional systems.
+\newblock {\em SIAM J. Control Optim.}, 45(5):1714--1735, 2006.
+
+\bibitem{JacZwa12book}
+Birgit Jacob and Hans Zwart.
+\newblock {\em Linear Port-Hamiltonian Systems on Infinite-Dimensional Spaces},
+  volume 223 of {\em Operator Theory: Advances and Applications}.
+\newblock Birkh\"{a}user, Basel, 2012.
+
+\bibitem{LogTow97}
+H.~Logemann and S.~Townley.
+\newblock Low-gain control of uncertain regular linear systems.
+\newblock {\em SIAM J. Control Optim.}, 35(1):78--116, 1997.
+
+\bibitem{LogTow03}
+Hartmut Logemann and Stuart Townley.
+\newblock Adaptive low-gain integral control of multivariable well-posed linear
+  systems.
+\newblock {\em SIAM J. Control Optim.}, 41(6):1722--1732, 2003.
+
+\bibitem{Mor94}
+K.~A. Morris.
+\newblock Design of finite-dimensional controllers for infinite-dimensional
+  systems by approximation.
+\newblock {\em J. Math. Systems Estim. Control}, 4(2):30, 1994.
+
+\bibitem{NatGil14}
+V.~Natarajan, D.S. Gilliam, and G.~Weiss.
+\newblock The state feedback regulator problem for regular linear systems.
+\newblock {\em Automatic Control, IEEE Transactions on}, 59(10):2708--2723,
+  2014.
+
+\bibitem{PauPha18arxiv}
+L.~{Paunonen}, D.~{Phan}, and P.~{Laakkonen}.
+\newblock {Reduced Order Controller Design for Robust Output Regulation of
+  Parabolic Systems}.
+\newblock {\em ArXiv e-prints}, November 2018.
+
+\bibitem{Pau11phd}
+Lassi Paunonen.
+\newblock {\em Output Regulation Theory for Linear Systems with
+  Infinite-Dimensional and Periodic Exosystems}.
+\newblock PhD thesis, Tampere University of Technology, 2011.
+
+\bibitem{Pau16a}
+Lassi Paunonen.
+\newblock Controller design for robust output regulation of regular linear
+  systems.
+\newblock {\em IEEE Trans. Automat. Control}, 61(10):2974--2986, 2016.
+
+\bibitem{Pau17b}
+Lassi Paunonen.
+\newblock Robust controllers for regular linear systems with
+  infinite-dimensional exosystems.
+\newblock {\em SIAM J. Control Optim.}, 55(3):1567--1597, 2017.
+
+\bibitem{Pau17carxiv}
+Lassi Paunonen.
+\newblock {Stability and Robust Regulation of Passive Linear Systems}.
+\newblock {\em ArXiv e-prints (https://arxiv.org/abs/1706.03224)}, June 2017.
+
+\bibitem{PauLeGLHMNC18}
+Lassi Paunonen, Yann~Le Gorrec, and H\'{e}ctor Ram{\'{\i}}rez.
+\newblock A simple robust controller for port--{H}amiltonian systems.
+\newblock In {\em Proceedings of the 6th IFAC Workshop on Lagrangian and
+  Hamiltonian Methods for Nonlinear Control}, Valparaiso, Chile, May 1--4 2018.
+
+\bibitem{PauPoh10}
+Lassi Paunonen and Seppo Pohjolainen.
+\newblock Internal model theory for distributed parameter systems.
+\newblock {\em SIAM J. Control Optim.}, 48(7):4753--4775, 2010.
+
+\bibitem{PauPoh13a}
+Lassi Paunonen and Seppo Pohjolainen.
+\newblock Reduced order internal models in robust output regulation.
+\newblock {\em IEEE Trans. Automat. Control}, 58(9):2307--2318, 2013.
+
+\bibitem{PauPoh14a}
+Lassi Paunonen and Seppo Pohjolainen.
+\newblock The internal model principle for systems with unbounded control and
+  observation.
+\newblock {\em SIAM J. Control Optim.}, 52(6):3967--4000, 2014.
+
+\bibitem{Poh81a}
+Seppo Pohjolainen.
+\newblock A feedforward controller for distributed parameter systems.
+\newblock {\em Internat. J. Control}, 34(1):173--184, 1981.
+
+\bibitem{Poh82}
+Seppo~A. Pohjolainen.
+\newblock Robust multivariable {PI}-controller for infinite-dimensional
+  systems.
+\newblock {\em IEEE Trans. Automat. Control}, 27(1):17--31, 1982.
+
+\bibitem{RebWei03}
+Richard Rebarber and George Weiss.
+\newblock Internal model based tracking and disturbance rejection for stable
+  well-posed systems.
+\newblock {\em Automatica J. IFAC}, 39(9):1555--1569, 2003.
+
+\bibitem{Sch83b}
+J.~M. Schumacher.
+\newblock Finite-dimensional regulators for a class of infinite-dimensional
+  systems.
+\newblock {\em Systems Control Lett.}, 3:7--12, 1983.
+
+\bibitem{Tre13book}
+L.~N. Trefethen.
+\newblock {\em {Approximation Theory and Approximation Practice}}.
+\newblock Philadelphia, PA: Society for Industrial and Applied Mathematics
+  (SIAM), 2013.
+
+\bibitem{TucWei09book}
+M.~Tucsnak and G.~Weiss.
+\newblock {\em Observation and Control for Operator Semigroups}.
+\newblock Birkh\"auser Basel, 2009.
+
+\bibitem{XuJer95}
+Cheng-Zhong Xu and Hamadi Jerbi.
+\newblock A robust {PI}-controller for infinite-dimensional systems.
+\newblock {\em Internat. J. Control}, 61(1):33--45, 1995.
+
+\bibitem{XuSal14}
+Cheng-Zhong Xu and Gauthier Sallet.
+\newblock Multivariable boundary {PI} control and regulation of a fluid flow
+  system.
+\newblock {\em Math. Control Relat. Fields}, 4(4):501--520, 2014.
+
+\bibitem{XuDub17a}
+Xiaodong Xu and Stevan Dubljevic.
+\newblock Output and error feedback regulator designs for linear
+  infinite-dimensional systems.
+\newblock {\em Automatica J. IFAC}, 83:170--178, 2017.
+
+\end{thebibliography}

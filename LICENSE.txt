@@ -1,0 +1,22 @@
+RORPack -- A Python software library for simulation and controller design for robust output regulation of linear systems.
+Copyright (C) 2019 by Lassi Paunonen and the developers of RORPack.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+For a copy of the GNU General Public License, see <https://www.gnu.org/licenses/gpl.txt>.
+
+Contact details:
+Assistant Professor Lassi Paunonen (project maintainer)
+Email: lassi.paunonen@tuni.fi
+Mathematics
+Faculty of Information Technology and Communication Sciences
+Tampere University
+PO. Box 692, 33101 Tampere, Finland
