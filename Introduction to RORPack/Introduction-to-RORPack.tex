@@ -565,7 +565,7 @@ The parameter \texttt{PKvals} is a $(q+1)\times p\times m$ array containing the 
      \end{quotation}
      \medskip
      where
-     \texttt{freqsReal} contains the (real) frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{dim\_Y} is the dimension of the output space, \texttt{epsgain} is a parameter $\eps>0$ that controls the norm of $K$,
+     \texttt{freqsReal} contains the (real) frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{dim\_Y} is the dimension of the output space, \texttt{epsgain} is a parameter $\eps>0$ which controls the norm of $G_2$ and $K$,
      and \texttt{sys} contains the parameters of the plant. The parameter \texttt{Dc} is the controller feedthrough matrix which can be used as a ``prestabilizing'' output feedback to the system (a negative definite \texttt{Dc} corresponds to prestabilizing negative output feedback to the system). 
      In addition, \texttt{Pvals} is a $(q+1)\times p\times m$ array containing the values $P(i\gw_k)=\CL R(i\gw_k,A)B+D\in \C^{p\times m}$ of the transfer function of~\eqref{eq:plantintro} at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of the reference and disturbance signals in~\eqref{eq:yrefwdist}. The parameter \texttt{Pvals} is optional and it is currently not used in the controller design.
      In future versions of the implementation this information may be used to improve the performance of the controller.
