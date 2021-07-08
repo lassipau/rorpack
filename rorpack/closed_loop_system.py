@@ -138,8 +138,8 @@ class ClosedLoopSystem:
                         xe0, vectorized=True, t_eval=tgrid,
                         method='BDF', **options)
         xe = sol.y
-        output = np.dot(np.array(self.Ce), xe)
+        error = np.dot(np.array(self.Ce), xe) + np.dot(np.array(self.De), np.vstack((wdist(tgrid), yref(tgrid))))
+        output = error + yref(tgrid)
         control = np.dot(np.array(self.Ce), xe)
-        error = output + np.dot(np.array(self.De), np.vstack((wdist(tgrid), yref(tgrid))))
         t2 = time.time()
         return sol, output, error, control, t2 - t1
