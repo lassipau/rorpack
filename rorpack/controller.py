@@ -524,7 +524,7 @@ class PassiveRC(Controller):
             The system to construct the controller for. Only used in
             optimizing the gain parameter 'eps'.
         Dc : (m,p) array_like, optional
-            Feedthrough operator of the controller, required to be positive
+            Feedthrough operator of the controller, required to be negative
             semidefinite. Assigned to be zero by default.
         Pvals : (q+1, dim_Y, dim_U) array_like, optional
              Values of the transfer function P at the complex frequencies 
@@ -540,21 +540,21 @@ class PassiveRC(Controller):
         '''
         if Dc is None:
             Dc = np.zeros((sys.B.shape[1],sys.C.shape[0]))
-        stab_sys = sys.output_feedback(-Dc)
+        stab_sys = sys.output_feedback(Dc)
         if not is_stable(stab_sys.A):
             raise Exception('System is not stable, cannot construct the controller')
 
         G1, G2 = construct_internal_model(freqsReal, dim_Y)
         K = -G2.conj().T
         if scipy.sparse.issparse(sys.A):
-            A0 = np.bmat([[sys.A.todense(), np.zeros((sys.B.shape[0], G1.shape[1]))], [np.dot(G2, sys.C), G1]])
+            A0 = np.bmat([[stab_sys.A.todense(), np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
         else:
-            A0 = np.bmat([[sys.A, np.zeros((sys.B.shape[0], G1.shape[1]))], [np.dot(G2, sys.C), G1]])
-        A1 = np.bmat([[np.zeros((sys.B.shape[0], A0.shape[1] - K.shape[1])), np.dot(sys.B, K)],
-                     [np.zeros((G2.shape[0], A0.shape[1] - K.shape[1])), np.dot(G2, np.dot(sys.D, K))]])
+            A0 = np.bmat([[stab_sys.A, np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
+        A1 = np.bmat([[np.zeros((stab_sys.B.shape[0], A0.shape[1] - K.shape[1])), np.dot(stab_sys.B, K)],
+                     [np.zeros((G2.shape[0], A0.shape[1] - K.shape[1])), np.dot(G2, np.dot(stab_sys.D, K))]])
         eps = optimize_epsgain(A0, A1, epsgain)
         print('Value of the low-gain parameter: %.3f' % eps)
-        Controller.__init__(self, G1, G2, eps * K, -Dc, eps)
+        Controller.__init__(self, G1, G2, eps * K, Dc, eps)
 
 
 class ApproximateRC(Controller):
