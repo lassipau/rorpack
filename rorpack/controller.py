@@ -204,22 +204,25 @@ def IMstabilization_general(freqs, Pvals, cG1, B1, IMstabmargin, IMstabmethod):
     else:
         raise Exception('Invalid IMstabmethod, choose either \'LQR\' or \'poleplacement\'')
 
-def optimize_epsgain(A, B, epsgain):
+def optimize_epsgain(A0, A1, A2, epsgain):
     '''
     Finds the positive real value :math:'\\varepsilon' for which
-    :math:`A + \\varepsilon  B` has (roughly) the largest stability margin. 
-    It is assumed that the stability margin has a unique maximum among the
-    provided 'epsgain', and the optimization algorithm uses naive exhaustive
-    search by starting from the smallest value of :math:`\\varepsilon` and
-    stops once the stability margin ceases to increase.
+    :math:`A_0 + \\varepsilon  A_1 + \\varepsilon^2 A_2` has (roughly) the largest 
+    stability margin. It is assumed that the stability margin has a unique 
+    maximum among the provided 'epsgain', and the optimization algorithm 
+    uses naive exhaustive search by starting from the smallest value of
+    :math:`\\varepsilon` and stops once the stability margin ceases to increase.
 
     Parameters
     ----------
-    A : (M, M) array_like
+    A  : (M, M) array_like
         The first matrix.
 
-    B : (M, N) array_like
+    A1 : (M, M) array_like
         The second matrix.
+
+    A2 : (M, M) array_like
+        The third matrix.
 
     epsgain : (, L) array_like
         A list of possible values of :math:`\\varepsilon` or the limits of
@@ -256,7 +259,7 @@ def optimize_epsgain(A, B, epsgain):
 
     # Find the epsilon with the largest stability margin.
     for ee in ee_cand:
-        stab_margin = stability_margin(A + ee * B)
+        stab_margin = stability_margin(A0 + ee * A1 + np.square(ee) * A2)
         if stab_margin < old_stab_marg + marg_tol:
             break
         old_stab_marg = stab_margin
@@ -302,7 +305,9 @@ class LowGainRC(Controller):
             A0 = np.bmat([[sys.A, np.zeros((sys.B.shape[0], G1.shape[1]))], [np.dot(G2, sys.C), G1]])
         A1 = np.bmat([[np.zeros((sys.B.shape[0], A0.shape[1] - K.shape[1])), np.dot(sys.B, K)],
                      [np.zeros((G2.shape[0], A0.shape[1] - K.shape[1])), np.dot(G2, np.dot(sys.D, K))]])
-        eps = optimize_epsgain(A0, A1, epsgain)
+        A2 = np.zeros((A0.shape[0], A0.shape[1]))
+
+        eps = optimize_epsgain(A0, A1, A2, epsgain)
         print('Value of the low-gain parameter: %.3f' % eps)
         Controller.__init__(self, G1, G2, eps * K, None, eps)
 
@@ -549,12 +554,14 @@ class PassiveRC(Controller):
         if scipy.sparse.issparse(sys.A):
             A0 = np.bmat([[stab_sys.A.todense(), np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
         else:
-            A0 = np.bmat([[stab_sys.A, np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
-        A1 = np.bmat([[np.zeros((stab_sys.B.shape[0], A0.shape[1] - K.shape[1])), np.dot(stab_sys.B, K)],
-                     [np.zeros((G2.shape[0], A0.shape[1] - K.shape[1])), np.dot(G2, np.dot(stab_sys.D, K))]])
-        eps = optimize_epsgain(A0, A1, epsgain)
+            A0 = np.bmat([[stab_sys.A, np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.zeros((G2.shape[0], stab_sys.A.shape[1])), G1]])
+        A1 = np.bmat([[np.zeros(stab_sys.A.shape), np.dot(stab_sys.B, K)],
+                     [np.dot(G2, stab_sys.C), np.zeros(G1.shape)]])
+        A2 = np.bmat([[np.zeros(stab_sys.A.shape), np.zeros((stab_sys.A.shape[0],G1.shape[1]))],
+                     [np.zeros((G2.shape[0], stab_sys.A.shape[1])), np.dot(G2, np.dot(stab_sys.D, K))]])
+        eps = optimize_epsgain(A0, A1, A2, epsgain)
         print('Value of the low-gain parameter: %.3f' % eps)
-        Controller.__init__(self, G1, G2, eps * K, Dc, eps)
+        Controller.__init__(self, G1, eps * G2, eps * K, Dc, eps)
 
 
 class ApproximateRC(Controller):

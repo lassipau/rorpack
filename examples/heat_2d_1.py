@@ -7,7 +7,7 @@ Copyright (C) 2019 by Lassi Paunonen and the developers of RORPack.
 import numpy as np
 from rorpack.system import LinearSystem
 from rorpack.exosystem import ExoSystem
-from rorpack.controller import LowGainRC
+from rorpack.controller import *
 from rorpack.closed_loop_system import ClosedLoopSystem
 from rorpack.plotting import *
 from rorpack.utilities import fix_freqs
@@ -97,12 +97,18 @@ freqsReal = np.array([0, np.pi])
 
 # Construct the controller 
 
-# Low-Gain Robust Controller for a stable system
-# Requires the transfer function values P(i*w_k)
-# epsgainrange = np.array((0.4,0.7))
-epsgainrange = 0.5
-Pvals = np.array(list(map(sys.P, 1j * freqsReal)))
-contr = LowGainRC(sys, freqsReal, epsgainrange, Pvals)
+# # Low-Gain Robust Controller for a stable system
+# # Requires the transfer function values P(i*w_k)
+# # epsgainrange = np.array((0.4,0.7))
+# epsgainrange = 0.5
+# Pvals = np.array(list(map(sys.P, 1j * freqsReal)))
+# contr = LowGainRC(sys, freqsReal, epsgainrange, Pvals)
+
+# Passive Robust Controller
+epsgainrange = np.array([1,2.5])
+dim_Y = sys.C.shape[0]
+contr = PassiveRC(freqsReal, dim_Y, epsgainrange, sys)
+
 
 # Construct the closed-loop system
 clsys = ClosedLoopSystem(sys, contr)
