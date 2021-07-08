@@ -11,14 +11,20 @@ S.~Boulite, A.~Idrissi, and A.~Ould~Maaloum.
   state spaces.
 \newblock {\em J. Math. Anal. Appl.}, 349(1):90--99, 2009.
 
+\bibitem{ByrGil02}
+Christopher~I. Byrnes, David~S. Gilliam, Victor~I. Shubov, and George Weiss.
+\newblock Regular linear systems governed by a boundary controlled heat
+  equation.
+\newblock {\em J. Dyn. Control Syst.}, 8(3):341--370, 2002.
+
 \bibitem{ByrIsi03}
-C.~I. Byrnes and A.~Isidori.
+Christopher~I. Byrnes and Alberto Isidori.
 \newblock Limit sets, zero dynamics, and internal models in the problem of
   nonlinear output regulation.
 \newblock {\em IEEE Trans. Automat. Control}, 48(10):1712--1723, 2003.
 
 \bibitem{ByrIsi04}
-C.~I. Byrnes and A.~Isidori.
+Christopher~I. Byrnes and Alberto Isidori.
 \newblock Nonlinear internal models for output regulation.
 \newblock {\em IEEE Trans. Automat. Control}, 49(12):2244--2247, 2004.
 
@@ -27,12 +33,6 @@ Christopher~I. Byrnes, Istv{\'a}n~G. Lauk{\'o}, David~S. Gilliam, and Victor~I.
   Shubov.
 \newblock Output regulation problem for linear distributed parameter systems.
 \newblock {\em IEEE Trans. Automat. Control}, 45(12):2236--2252, 2000.
-
-\bibitem{ByrGil02}
-C.I. Byrnes, D.S. Gilliam, V.I. Shubov, and G.~Weiss.
-\newblock Regular linear systems governed by a boundary controlled heat
-  equation.
-\newblock {\em Journal of Dynamical and Control Systems}, 8(3):341--370, 2002.
 
 \bibitem{CurZwa95book}
 Ruth~F. Curtain and Hans~J. Zwart.
@@ -58,12 +58,12 @@ V.~Dos~Santos, G.~Bastin, J.-M. Coron, and B.~d'Andr\'{e}a Novel.
 \newblock {\em Automatica J. IFAC}, 44(5):1310--1318, 2008.
 
 \bibitem{DriHal14book}
-T.~A Driscoll, N.~Hale, and L.~N. Trefethen.
+Tobin~A. Driscoll, Nicholas Hale, and Lloyd~N. Trefethen.
 \newblock {\em Chebfun Guide}.
 \newblock Pafnuty Publications, 2014.
 
 \bibitem{FraWon75a}
-B.~A. Francis and W.~M. Wonham.
+Bruce~A. Francis and W.~Murray Wonham.
 \newblock The internal model principle for linear multivariable regulators.
 \newblock {\em Appl. Math. Optim.}, 2(2):170--194, 1975.
 
@@ -94,15 +94,10 @@ Jie Huang.
 \newblock {\em Nonlinear Output Regulation, Theory and Applications}.
 \newblock SIAM, Philadelphia, 2004.
 
-\bibitem{HumKur18}
-Jukka-Pekka Humaloja, Mikael Kurula, and Lassi Paunonen.
-\newblock Robust output regulation for wave equations with boundary control.
-\newblock {\em in review}.
-
 \bibitem{HumPau18}
 Jukka-Pekka Humaloja and Lassi Paunonen.
 \newblock Robust regulation of infinite-dimensional port-{H}amiltonian systems.
-\newblock {\em IEEE Transactions on Automatic Control}, 63(5):1480--1486, 2018.
+\newblock {\em IEEE Trans. Automat. Control}, 63(5):1480--1486, 2018.
 
 \bibitem{Imm06phd}
 Eero Immonen.
@@ -129,7 +124,7 @@ Birgit Jacob and Hans Zwart.
 \newblock Birkh\"{a}user, Basel, 2012.
 
 \bibitem{LogTow97}
-H.~Logemann and S.~Townley.
+Hartmut Logemann and Stuart Townley.
 \newblock Low-gain control of uncertain regular linear systems.
 \newblock {\em SIAM J. Control Optim.}, 35(1):78--116, 1997.
 
@@ -140,16 +135,15 @@ Hartmut Logemann and Stuart Townley.
 \newblock {\em SIAM J. Control Optim.}, 41(6):1722--1732, 2003.
 
 \bibitem{Mor94}
-K.~A. Morris.
+Kirsten Morris.
 \newblock Design of finite-dimensional controllers for infinite-dimensional
   systems by approximation.
-\newblock {\em J. Math. Systems Estim. Control}, 4(2):30, 1994.
+\newblock {\em J. Math. Systems Estim. Control}, 4(2):1--30, 1994.
 
 \bibitem{NatGil14}
 V.~Natarajan, D.S. Gilliam, and G.~Weiss.
 \newblock The state feedback regulator problem for regular linear systems.
-\newblock {\em Automatic Control, IEEE Transactions on}, 59(10):2708--2723,
-  2014.
+\newblock {\em IEEE Trans. Automat. Control}, 59(10):2708--2723, 2014.
 
 \bibitem{PauPha18arxiv}
 L.~{Paunonen}, D.~{Phan}, and P.~{Laakkonen}.
@@ -184,7 +178,8 @@ Lassi Paunonen.
 Lassi Paunonen, Yann~Le Gorrec, and H\'{e}ctor Ram{\'{\i}}rez.
 \newblock A simple robust controller for port--{H}amiltonian systems.
 \newblock In {\em Proceedings of the 6th IFAC Workshop on Lagrangian and
-  Hamiltonian Methods for Nonlinear Control}, Valparaiso, Chile, May 1--4 2018.
+  Hamiltonian Methods for Nonlinear Control}, pages 92--96, Valparaiso, Chile,
+  May 1--4 2018.
 
 \bibitem{PauPoh10}
 Lassi Paunonen and Seppo Pohjolainen.
@@ -226,10 +221,9 @@ J.~M. Schumacher.
 \newblock {\em Systems Control Lett.}, 3:7--12, 1983.
 
 \bibitem{Tre13book}
-L.~N. Trefethen.
+Lloyd~N. Trefethen.
 \newblock {\em {Approximation Theory and Approximation Practice}}.
-\newblock Philadelphia, PA: Society for Industrial and Applied Mathematics
-  (SIAM), 2013.
+\newblock SIAM, Philadelphia, 2013.
 
 \bibitem{TucWei09book}
 M.~Tucsnak and G.~Weiss.

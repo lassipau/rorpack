@@ -120,7 +120,7 @@ epsgainrange = np.array([0.01,0.3])
 epsgainrange = 0.3
 dim_Y = sys.C.shape[0]
 # Pvals = np.array(list(map(sys.P, 1j * freqsReal)))
-contr = PassiveRC(freqsReal, dim_Y, epsgainrange, sys, np.atleast_2d(kappa_S))
+contr = PassiveRC(freqsReal, dim_Y, epsgainrange, sys, np.atleast_2d(-kappa_S))
 
 
 # Construct the closed-loop system.

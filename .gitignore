@@ -122,3 +122,6 @@ robust_control.egg-info/
 *.toc
 *.synctex.gz
 *.out
+
+# OS X extra files
+.DS_Store
