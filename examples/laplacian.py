@@ -81,16 +81,16 @@ def diffusion_op_1d(spgrid, cfun, BCtype):
     Dop = 1/(np.square(h))*Dop
 
     # Neumann-Neuman BCs
-    if BCtype is 'NN':
+    if BCtype == 'NN':
         # No need to change the grid
         spgrid = spgrid
-    elif BCtype is 'ND':
+    elif BCtype == 'ND':
         spgrid = spgrid[0:-1]
         Dop = Dop[0:-1,0:-1]
-    elif BCtype is 'DN':
+    elif BCtype == 'DN':
         spgrid = spgrid[1:]
         Dop = Dop[1:,1:]
-    elif BCtype is 'DD':
+    elif BCtype == 'DD':
         spgrid = spgrid[1:-1]
         Dop = Dop[1:-1,1:-1]
     else:
