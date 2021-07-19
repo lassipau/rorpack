@@ -45,7 +45,7 @@ def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2):
             spgrid <= IC2[1])
     C = np.stack((C1, C2))
     D = np.zeros((2, 2))
-    Bd = np.bmat([[np.atleast_2d(-2/h)], [np.zeros((N-1, 1))]])
+    Bd = np.bmat([[np.atleast_2d((2*cfun(0))/h)], [np.zeros((N-1, 1))]])
 
     return LinearSystem(A, B, C, D, Bd, np.zeros((2,1))), spgrid
 

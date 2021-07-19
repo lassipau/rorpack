@@ -16,7 +16,7 @@ from rorpack.controller import *
 from rorpack.closed_loop_system import ClosedLoopSystem
 from rorpack.plotting import *
 from laplacian import diffusion_op_1d
-from external import chebfun_interface as cfi
+# from external import chebfun_interface as cfi
 from rorpack.utilities import stability_margin
 
 def construct_heat_1d_2(N, cfun):
@@ -32,7 +32,7 @@ def construct_heat_1d_2(N, cfun):
     DiffOp, spgrid = diffusion_op_1d(spgrid, cfun, 'ND')
     A = DiffOp.todense()
 
-    B = np.bmat([[np.atleast_2d(2/h)], [np.zeros((N-1, 1))]])
+    B = np.bmat([[np.atleast_2d((2*cfun(0))/h)], [np.zeros((N-1, 1))]])
     Bd = B
     C = np.bmat([[np.atleast_2d(1), np.zeros((1, N-1))]])
     D = np.zeros((1, 1))
@@ -75,8 +75,8 @@ sys, spgrid = construct_heat_1d_2(N, cfun)
 
 # Case 1:
 yref = lambda t: np.sin(2*t) + .5 * np.cos(3*t)
-# wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
-wdist = lambda t: np.sin(6*t) - 2*np.atleast_1d(1)
+wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
+# wdist = lambda t: np.sin(6*t) - 2*np.atleast_1d(1)
 
 # Case 2:
 # yref = lambda t: np.ones(np.atleast_1d(t).shape)
@@ -130,15 +130,15 @@ freqsReal = np.array([0, 1, 2, 3, 6])
 IMstabmargin = 0.2
 IMstabmethod = 'LQR'
 # IMstabmethod = 'poleplacement'
-K2 = - 1/(N-1)*np.bmat([[np.atleast_2d(0.5),np.ones((1,N-2)),np.atleast_2d(0.5)]])
+K2 = 1/(N-1)*np.bmat([[np.atleast_2d(0.5),np.ones((1,N-2)),np.atleast_2d(0.5)]])
 L1 = - np.ones((N,1))
-# A string representing the functional L1 (in Matlab function syntax)
-L1fun = '-1'
-# Compute P_K(i*w_k) and 'CKRKvals' using Chebfun/Matlab:
-PLvals, RLBLvals = cfi.heat_1d_2_PLvals(cfunML,freqsReal,L1fun,spgrid)
+# # A string representing the functional L1 (in Matlab function syntax)
+# L1fun = '-1'
+# # Compute P_K(i*w_k) and 'CKRKvals' using Chebfun/Matlab:
+# PLvals, RLBLvals = cfi.heat_1d_2_PLvals(cfunML,freqsReal,L1fun,spgrid)
 # Alternative (without Matlab) Computation using the FD approximation:
-# PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
-# RLBLvals = None
+PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
+RLBLvals = None
 contr = DualObserverBasedRC(sys, freqsReal, PLvals, K2, L1, IMstabmargin, IMstabmethod,RLBLvals)
 
 

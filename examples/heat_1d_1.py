@@ -30,8 +30,8 @@ def construct_heat_1d_1(N, cfun):
     DiffOp, spgrid = diffusion_op_1d(spgrid, cfun, 'NN')
     A = DiffOp.todense()
 
-    B = np.bmat([[np.atleast_2d(-2/h)], [np.zeros((N-1, 1))]])
-    Bd = np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d(2/h)]])
+    B = np.bmat([[np.atleast_2d((2*cfun(0))/h)], [np.zeros((N-1, 1))]])
+    Bd = np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d((2*cfun(1))/h)]])
     C = np.bmat([[np.zeros((1, N-1)), np.atleast_2d(1)]])
     D = np.zeros((1, 1))
     return LinearSystem(A, B, C, D, Bd), spgrid
@@ -41,11 +41,11 @@ def construct_heat_1d_1(N, cfun):
 N = 51
 
 # The spatially varying thermal diffusivity of the material
-cfun = lambda x: np.ones(np.atleast_1d(x).shape)
-cfun = lambda x: 1+x
-cfun = lambda x: 1-2*x*(1-2*x)
+# cfun = lambda x: np.ones(np.atleast_1d(x).shape)
+# cfun = lambda x: 1+x
+# cfun = lambda x: 1-2*x*(1-2*x)
 cfun = lambda x: 1+.5*np.cos(5/2*np.pi*x)
-cfun = lambda x: .3-.6*x*(1-x)
+# cfun = lambda x: .3-.6*x*(1-x)
 
 # Length of the simulation
 t_begin = 0
@@ -65,8 +65,8 @@ sys, spgrid = construct_heat_1d_1(N, cfun)
 
 # Case 1:
 yref = lambda t: np.sin(2*t)  # + 2 * np.cos(2*t)
-wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
-# wdist = lambda t: np.sin(2*t)
+# wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
+wdist = lambda t: np.sin(2*t)
 
 # Case 2:
 # yref = lambda t: np.ones(np.atleast_1d(t).shape)
@@ -83,18 +83,18 @@ freqsReal = np.array([1, 2, 3, 6])
 # Observer-Based Robust Controller
 # Requires stabilizing operators K21 and L
 # and the transfer function values P_K(i*w_k) 
-K21 = 7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
+K21 = -7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
 L = -7 * np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d(2*(N-1))]])
 PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 IMstabmargin = 0.45
-IMstabmethod = 'poleplacement'
-# IMstabmethod = 'LQR'
+# IMstabmethod = 'poleplacement'
+IMstabmethod = 'LQR'
 contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
 
 # Dual Observer-Based Robust Controller
 # Requires stabilizing operators K2 and L1
 # and the transfer function values P_K(i*w_k) 
-# K2 = 7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
+# K2 = -7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
 # L1 = -7 * np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d(2*(N-1))]])
 # PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
 # IMstabmargin = 0.5
