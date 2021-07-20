@@ -273,7 +273,7 @@ class LowGainRC(Controller):
     Construct a Low-Gain Robust Controller for a stable linear system.
     '''
 
-    def __init__(self, sys, freqsReal, epsgain, Pvals):
+    def __init__(self, sys, freqsReal, epsgain, Pvals, Dc=None):
         '''
         Parameters
         ----------
@@ -286,6 +286,9 @@ class LowGainRC(Controller):
             then this value will be used in the construction of the controller.
             If a 1D array is given, optimize_epsgain is used to (roughly)
             optimize the stability margin of the closed-loop system.
+        Dc : (m,p) array_like, optional
+            Feedthrough operator of the controller, required to be negative
+            semidefinite. Assigned to be zero by default.
         Pvals : (N, M, P) array_like
              Values of the transfer function P(.) of the system at the complex frequencies (i*w_k)_{k=0}^q.
 
@@ -294,17 +297,20 @@ class LowGainRC(Controller):
         stabexception : Exception 
             Thrown if the original controlled system is not stable.
         '''
-
-        if not is_stable(sys.A):
+        if Dc is None:
+            Dc = np.zeros((sys.B.shape[1],sys.C.shape[0]))
+        stab_sys = sys.output_feedback(Dc)
+        if not is_stable(stab_sys.A):
             raise Exception('System is not stable, cannot construct the controller')
+
         G1, G2 = construct_internal_model(freqsReal, Pvals[0].shape[0])
         K = IMstabilization_dissipative(freqsReal, Pvals)
-        if scipy.sparse.issparse(sys.A):
-            A0 = np.bmat([[sys.A.todense(), np.zeros((sys.B.shape[0], G1.shape[1]))], [np.dot(G2, sys.C), G1]])
+        if scipy.sparse.issparse(stab_sys.A):
+            A0 = np.bmat([[stab_sys.A.todense(), np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
         else:
-            A0 = np.bmat([[sys.A, np.zeros((sys.B.shape[0], G1.shape[1]))], [np.dot(G2, sys.C), G1]])
-        A1 = np.bmat([[np.zeros((sys.B.shape[0], A0.shape[1] - K.shape[1])), np.dot(sys.B, K)],
-                     [np.zeros((G2.shape[0], A0.shape[1] - K.shape[1])), np.dot(G2, np.dot(sys.D, K))]])
+            A0 = np.bmat([[stab_sys.A, np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
+        A1 = np.bmat([[np.zeros((stab_sys.B.shape[0], A0.shape[1] - K.shape[1])), np.dot(stab_sys.B, K)],
+                     [np.zeros((G2.shape[0], A0.shape[1] - K.shape[1])), np.dot(G2, np.dot(stab_sys.D, K))]])
         A2 = np.zeros((A0.shape[0], A0.shape[1]))
 
         eps = optimize_epsgain(A0, A1, A2, epsgain)
