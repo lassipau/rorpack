@@ -15,7 +15,7 @@ and in the simulation it is approximated using a Finite Differences scheme.
 '''
 
 import numpy as np
-from scipy.sparse import spdiags, bmat, eye, lil_matrix
+from scipy.sparse import spdiags
 from rorpack.system import LinearSystem
 from rorpack.controller import *
 from rorpack.closed_loop_system import ClosedLoopSystem
@@ -46,8 +46,8 @@ def construct_TimoshenkoLHMNC18(w0fun, wd0fun, phi0fun, phid0fun, N):
 
     ZN = np.zeros((N, N))
 
-    A12 = np.bmat([ZN, P114], [ZN, ZN])
-    A21 = np.bmat([ZN, ZN], [P141, ZN])
+    A12 = np.bmat([[ZN, P114], [ZN, ZN]])
+    A21 = np.bmat([[ZN, ZN], [P141, ZN]])
 
     A = np.bmat([[A11, A12], [A21, A22]])
 
@@ -61,7 +61,6 @@ def construct_TimoshenkoLHMNC18(w0fun, wd0fun, phi0fun, phid0fun, N):
     spgrid = xis
 
     # Compute the initial state based on w0fun, wd0fun, phi0, and phid0
-    # x0 = [diff(w0fun(xis))/h-phi0fun(xis(1:(end-1)));rho*wd0fun(xis(2:end));diff(phi0fun(xis))/h;I_rho*phid0fun(xis(2:end))];
     x0 = np.bmat([[np.diff(w0fun(xis))/h - phi0fun(xis[:-1])], [rho*wd0fun(xis[1:])], [np.diff(phi0fun(xis))], [phid0fun(xis[1:])]])
 
     return LinearSystem(A, B, C, D, Bd), spgrid, x0
@@ -84,3 +83,43 @@ phid0fun = lambda x: np.zeros(np.atleast_1d(x).shape)
 
 # Construct the Timoshenko beam model from the conference article by
 # Paunonen, Le Gorrec and Ramirez at LHMNC in 2018.
+sys, spgrid, x0 = construct_TimoshenkoLHMNC18(w0fun, wd0fun, phi0fun, phid0fun, N)
+
+# Define the reference and disturbance signals
+# NOTE: The system has a transmission zero at s=0, and thus the tracking 
+# and rejection of signal parts with this frequency is not possible! (i.e.,
+# freqsReal should not contain 0).
+
+#yref = lambda t: np.sin(2*t) + 0.1*np.cos(6*t)
+#yref = lambda t: np.sin(2*t) + 0.2*np.cos(3*t)
+#yref = lambda t: np.ones(np.atleast_1d(t).shape)
+
+#wdist = lambda t: np.ones(np.atleast_1d(t).shape)
+#wdist = lambda t: np.sin(t)
+#wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
+
+# Case 1:
+yref = lambda t: np.sin(2*t) + 0.5*np.cos(1*t)
+wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
+
+# Case 2:
+# yref = lambda t: np.ones(np.atleast_1d(t).shape)
+# wdist = lambda t: np.ones(np.atleast_1d(t).shape)
+
+# Case 3:
+# yref = lambda t: np.sin(2*t) + 0.1*np.cos(6*t)
+# wdist = lambda t: np.sin(t)
+
+freqsReal = np.array([1, 2])
+
+# Construct the controller
+
+# Simple passive robust controller, used in the original Timoshenko beam
+# example in the LHMNC 2018 conference paper (simulation not included in
+# the paper).
+
+dimY = sys.C.shape[0]
+epsgain = np.array([3,7])
+# epsgain = 13;
+contr = PassiveRC(freqsReal, dimY, epsgain, sys)
+
