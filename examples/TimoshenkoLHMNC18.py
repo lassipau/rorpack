@@ -37,8 +37,8 @@ def construct_TimoshenkoLHMNC18(w0fun, wd0fun, phi0fun, phid0fun, N):
 
     ee = np.ones((1,N))
 
-    P012 = (1/h*spdiags(np.vstack((-ee, ee)), [-1, 0], N, N)).todense()
-    P021 = (1/h*spdiags(np.vstack((-ee, ee)), [0, 1], N, N)).todense()
+    P012 = (1/h*spdiags(np.vstack((-ee, ee)), [-1, 0], N, N).todense())
+    P021 = (1/h*spdiags(np.vstack((-ee, ee)), [0, 1], N, N).todense())
 
     A11 = np.bmat([[np.zeros((N, N)), P012], [P021, -bw*np.eye(N)]])
     A22 = np.bmat([[np.zeros((N, N)), P012], [P021, -bphi*np.eye(N)]])
@@ -63,8 +63,7 @@ def construct_TimoshenkoLHMNC18(w0fun, wd0fun, phi0fun, phid0fun, N):
     spgrid = xis
 
     # Compute the initial state based on w0fun, wd0fun, phi0, and phid0
-    # x0 = np.bmat([[np.diff(w0fun(xis))/h - phi0fun(xis[:-1])], [rho*wd0fun(xis[1:])], [np.diff(phi0fun(xis))], [phid0fun(xis[1:])]])
-    x0 = np.hstack((np.diff(w0fun(xis))/h - phi0fun(xis[:-1]), rho*wd0fun(xis[1:]), np.diff(phi0fun(xis)), phid0fun(xis[1:])))
+    x0 = np.hstack((np.diff(w0fun(xis))/h - phi0fun(xis[:-1]), rho*wd0fun(xis[1:]), np.diff(phi0fun(xis))/h, I_rho*phid0fun(xis[1:])))
 
     return LinearSystem(A, B, C, D, Bd), spgrid, x0
 
@@ -123,7 +122,7 @@ freqsReal = np.array([1, 2])
 # the paper).
 
 dimY = sys.C.shape[0]
-epsgain = np.array([3,7])
+epsgain = np.array([3, 7])
 # epsgain = 13;
 contr = PassiveRC(freqsReal, dimY, epsgain, sys)
 
@@ -134,7 +133,7 @@ contr = PassiveRC(freqsReal, dimY, epsgain, sys)
 # K21 = -0.5*sys.B.conj().T
 # L = -0.5*sys.C.conj().T
 # IMstabmethod = 'poleplacement'
-# # IMstabtype = 'LQR'
+# # IMstabmethod = 'LQR'
 # IMstabmargin = 0.5
 # PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 
@@ -158,6 +157,7 @@ tgrid = np.linspace(t_begin, t_end, t_points)
 # Plot the reference signal
 plt.plot(tgrid,yref(tgrid))
 plt.title('The reference signal $y_{ref}(t)$')
+plt.grid(True)
 plt.show()
 
 sol, output, error, control, t = clsys.simulate(xe0, tgrid, yref, wdist)
