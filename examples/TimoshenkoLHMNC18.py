@@ -16,6 +16,8 @@ and in the simulation it is approximated using a Finite Differences scheme.
 
 import numpy as np
 from scipy.sparse import spdiags
+from scipy.integrate import solve_ivp, cumtrapz
+from scipy.interpolate import interp1d
 from rorpack.system import LinearSystem
 from rorpack.controller import *
 from rorpack.closed_loop_system import ClosedLoopSystem
@@ -61,7 +63,8 @@ def construct_TimoshenkoLHMNC18(w0fun, wd0fun, phi0fun, phid0fun, N):
     spgrid = xis
 
     # Compute the initial state based on w0fun, wd0fun, phi0, and phid0
-    x0 = np.bmat([[np.diff(w0fun(xis))/h - phi0fun(xis[:-1])], [rho*wd0fun(xis[1:])], [np.diff(phi0fun(xis))], [phid0fun(xis[1:])]])
+    # x0 = np.bmat([[np.diff(w0fun(xis))/h - phi0fun(xis[:-1])], [rho*wd0fun(xis[1:])], [np.diff(phi0fun(xis))], [phid0fun(xis[1:])]])
+    x0 = np.hstack((np.diff(w0fun(xis))/h - phi0fun(xis[:-1]), rho*wd0fun(xis[1:]), np.diff(phi0fun(xis)), phid0fun(xis[1:])))
 
     return LinearSystem(A, B, C, D, Bd), spgrid, x0
 
@@ -112,6 +115,7 @@ wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
 
 freqsReal = np.array([1, 2])
 
+
 # Construct the controller
 
 # Simple passive robust controller, used in the original Timoshenko beam
@@ -123,3 +127,61 @@ epsgain = np.array([3,7])
 # epsgain = 13;
 contr = PassiveRC(freqsReal, dimY, epsgain, sys)
 
+# # Alternative controller:
+# # An observer-based robust controller
+# # Stabilizing state feedback and output injection operators K and L
+# # These are chosen based on collocated design. 
+# K21 = -0.5*sys.B.conj().T
+# L = -0.5*sys.C.conj().T
+# IMstabmethod = 'poleplacement'
+# # IMstabtype = 'LQR'
+# IMstabmargin = 0.5
+# PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
+
+# contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
+
+
+# Construct the closed-loop system
+clsys = ClosedLoopSystem(sys, contr)
+
+# Define the initial state of the closed-loop system
+# (the controller has zero initial state by default).
+z0 = np.zeros(contr.G1.shape[0])
+xe0 = np.concatenate((x0, z0))
+
+# Simulate the system.
+# Length of the simulation
+t_begin = 0
+t_end = 16
+t_points = 300
+tgrid = np.linspace(t_begin, t_end, t_points)
+# Plot the reference signal
+plt.plot(tgrid,yref(tgrid))
+plt.title('The reference signal $y_{ref}(t)$')
+plt.show()
+
+sol, output, error, control, t = clsys.simulate(xe0, tgrid, yref, wdist)
+print('Simulation took %.2f seconds' % t)
+
+# Finally, plot and animate the simulation.
+plot_output(tgrid, output, yref, 'samefig', 'default') 
+plot_error_norm(tgrid, error)
+plot_control(tgrid, control)
+
+# In order to visualize the behaviour of the beam, we need to compute the
+# deflection profile w(xi,t) based on the state variable x_2(t) =
+# \rho*\dot{w}(\xi,t) by numerical integration. 
+# We use a denser grid for 't' for the numerical integration
+tt_int = np.linspace(0,t_end,601)
+f = lambda t, xe: np.dot(clsys.Ae, xe) + np.dot(clsys.Be, np.vstack((wdist(t), yref(t))))
+sol_int = solve_ivp(f, (tt_int[0], tt_int[-1]), xe0, vectorized=True, t_eval=tt_int, method='BDF')
+xe_int = sol_int.y
+# In this example rho=1
+rho = 1
+profile_int = 1/rho*(np.dot(np.atleast_2d(w0fun(spgrid)).T, np.ones((1, len(tt_int)))) + np.vstack((np.zeros((1, len(tt_int))), cumtrapz(xe_int[N:(2*N), :], tt_int, initial=0))))
+# Interpolate the data to the plotting grid
+interp_fun = interp1d(tt_int, profile_int)
+profile = interp_fun(tgrid)
+
+plot_1d_surface(tgrid, spgrid, profile, colormap=cm.plasma)
+animate_1d_results(spgrid, profile, tgrid)
