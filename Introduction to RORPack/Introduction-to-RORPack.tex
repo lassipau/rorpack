@@ -953,6 +953,60 @@ In the simulations the system is approximated using the orthonormal eigenfunctio
   %The system is passive
 }
 
+\subsection{A Controlled Beam Equation}
+\label{sec:ControlledBeams}
+
+\medskip
+
+The example is related to the article~\cite{PauLeG22}.
+The controlled Timoshenko beam with constant parameters $\rho$ (mass density), $I_\rho$ rotary moment of inertia, $E$  Young's modulus, $I$ moment of inertia, $K$ shear modulus, is given by
+\eq{
+\rho \pd[2]{w}{t}(\xi,t) &= K \pdb{\xi} \left( \pd{w}{\xi}(\xi,t)-\phi(\xi,t) \right) - d_w \pd{w}{t}(\xi,t)\\
+I_\rho \pd[2]{\phi}{t}(\xi,t) &= EI\pd[2]{\phi}{\xi} + K\left( \pd{w}{\xi}(\xi,t)-\phi(\xi,t) \right) \\
+& \hspace{3cm}- d_\phi \pd{\phi}{t}(\xi,t) + \chi_{[1-\eta,1]}(\xi)u(t).
+}
+Here $w(\xi,t)$ is the displacement of the beam at $\xi\in(0,1)$ and $\phi(\xi,t)$ is the rotation angle of the beam. The $d_w$ and $d_\phi$ are viscous damping parameters. 
+The control acts through the input profile $\chi_{[1-\eta,1]}(\cdot)$ (the characteristic function of the interval $[1-\eta,1]$ for some $\eta<1$).
+The measured output (which is collocated with the control input) is given by
+\eq{
+y(t) = \int_{1-\eta}^1 \pd{\phi}{t}(\xi,t)dt.
+}
+
+In the simulation example the physical parameters of the model are 
+\eq{
+\rho=1, \quad
+ I_\rho = 1, \quad
+E=1, \quad
+I=1, \quad
+K=1, \quad
+d_w=2, \quad
+d_\phi=2, \quad
+\eta = 0.2.
+}
+
+In this example, the PDE model is approximated with Finite Differences scheme. This scheme is very simple and easy to implement, but it should be noted that literature offers several more reliable and advanced numerical approximation methods for this class of hyperbolic PDEs, and some of these are able to, for example, preserve the \emph{port--Hamiltonian} structure of the control system.
+
+By default, the control design used in the example is the Passive Robust Controller (\texttt{PassiveRC}), which was also the controller of choice in~\cite{PauLeGLHMNC18}. This controller can be used because the system is both exponentially stable and impedance passive.
+Because the control system has bounded input and output operators, it is also possible to use other control design methods, for example the Observer Based Robust Controller (\texttt{ObserverBasedRC}) or the Dual Observer Based Robust Controller (\texttt{DualObserverBasedRC}). The former is implemented and commented out in the code. For these alternative controller designs, the parameters $K_{21}$ and $L$ (the stabilizing state feedback and output injection gain) can be designed using ``collocated design'' as $K_{21} = -\kappa_K B^\ast$ and $L=-\kappa_L C^\ast$ for some gain parameters $\kappa_K,\kappa_L>0$.
+
+Figure~\ref{fig:BeamTim1} shows the outputs of the simulation example.
+
+\begin{figure}[h!]
+  \begin{minipage}{0.48\linewidth}
+    \begin{flushleft}
+      \includegraphics[width=\linewidth]{BTim1output.png}
+    \end{flushleft}
+  \end{minipage}
+  \begin{minipage}{0.48\linewidth}
+    \begin{flushright}
+      \includegraphics[width=0.95\linewidth]{BTim1profile.png}
+    \end{flushright}
+  \end{minipage}
+    \caption{Example outputs of the controlled Timoshenko beam.}
+  \label{fig:BeamTim1}
+\end{figure}
+
+
 \section{Contributors}
 
 %The purpose is to plan a lightweight software package for simulating robust output regulation of (approximated) distributed parameter systems within Matlab.
@@ -961,6 +1015,7 @@ In the simulations the system is approximated using the orthonormal eigenfunctio
   \item[Lassi Paunonen] Project leader, developer (2017--)
   \item[Mikko Aarnos] Developer (2018)
   \item[Jukka-Pekka Humaloja] Developer (2018--)
+  \item[Jonne Karru] Developer (2021)
 \end{description}
 
 

@@ -180,6 +180,12 @@ Lassi Paunonen, Yann~Le Gorrec, and H\'{e}ctor Ram{\'{\i}}rez.
 \newblock In {\em Proceedings of the 6th IFAC Workshop on Lagrangian and
   Hamiltonian Methods for Nonlinear Control}, pages 92--96, Valparaiso, Chile,
   May 1--4 2018.
+  
+\bibitem{PauLeG22}
+Lassi {Paunonen}, Yann {Le Gorrec}, and H{\'e}ctor {Ram{\'\i}rez}.
+\newblock A lyapunov approach to robust regulation of distributed
+  port-hamiltonian systems.
+\newblock {\em IEEE Trans. Automat. Control}, published online.
 
 \bibitem{PauPoh10}
 Lassi Paunonen and Seppo Pohjolainen.
