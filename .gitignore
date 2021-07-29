@@ -125,3 +125,6 @@ robust_control.egg-info/
 
 # OS X extra files
 .DS_Store
+
+# VSCode settings
+.vscode

@@ -85,11 +85,10 @@ freqsReal = np.array([1, 2, 3, 6])
 # and the transfer function values P_K(i*w_k) 
 K21 = -7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
 L = -7 * np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d(2*(N-1))]])
-PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 IMstabmargin = 0.45
 # IMstabmethod = 'poleplacement'
 IMstabmethod = 'LQR'
-contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
+contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 # Dual Observer-Based Robust Controller
 # Requires stabilizing operators K2 and L1

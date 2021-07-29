@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - Changed comparison with "is" to "==" in laplacian.py.
 - Changed the sign of G2 in controller/construct_internal_model.
+- Changed the sign of G2 in LowGainRC and PassiveRC accordingly with the above change.
 
 ### Removed
 
@@ -31,6 +32,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - 
 
-[unreleased]: 
+[unreleased]: https://github.com/lassipau/rorpack/tree/dev
 [v0.9.0]: 
 

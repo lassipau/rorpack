@@ -324,7 +324,7 @@ class ObserverBasedRC(Controller):
     Construct an Observer-Based Robust Controller for a possibly unstable linear system.
     '''
 
-    def __init__(self, sys, freqsReal, PKvals, K21, L, IMstabmargin=0.5, IMstabmethod='LQR', CKRKvals=None):
+    def __init__(self, sys, freqsReal, K21, L, IMstabmargin=0.5, IMstabmethod='LQR', CKRKvals=None):
         '''
         Parameters
         ----------
@@ -352,6 +352,9 @@ class ObserverBasedRC(Controller):
              By default, the values are computed directly using the
              parameters :math:`(A,B,C,D)` of the system.
         '''
+
+        PKvals = np.array(list(map(lambda freq1: sys.P_K(freq1, K21), 1j * freqsReal)))
+
         # The c in front of cG1, cG2 and cK signifies the internal model 
         # part of the controller
         cG1, cG2 = construct_internal_model(freqsReal, PKvals[0].shape[0])
