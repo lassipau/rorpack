@@ -135,9 +135,8 @@ contr = PassiveRC(freqsReal, dimY, epsgain, sys)
 # IMstabmethod = 'poleplacement'
 # # IMstabmethod = 'LQR'
 # IMstabmargin = 0.5
-# PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 
-# contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
+# contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 
 # Construct the closed-loop system

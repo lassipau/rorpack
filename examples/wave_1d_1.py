@@ -117,13 +117,11 @@ plt.show()
 
 # Observer-Based Robust Controller
 # Requires stabilizing operators K21 and L
-# and the transfer function values P_K(i*w_k)
 K21 = K_S
 L = L_S
-PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 IMstabmargin = 0.5
 IMstabmethod = 'LQR'
-contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
+contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 
 # Construct the closed-loop system.

@@ -62,7 +62,7 @@ def plot_output(tgrid, output, yref, style='samefig', colorstyle='default'):
 
     mpl.style.use(colorstyle)
 
-    if style is 'samefig' or N == 1:
+    if style == 'samefig' or N == 1:
         plt.figure(1)
         plt.plot(tgrid, yref(tgrid).T,color='0.5',linewidth=2.0)
 
@@ -76,7 +76,7 @@ def plot_output(tgrid, output, yref, style='samefig', colorstyle='default'):
         plt.title('Output $y(t)$ and the reference $y_{ref}(t)$ (gray)')
         plt.tight_layout()
         plt.grid(True)
-    elif style is 'subplot':
+    elif style == 'subplot':
         plt.figure(1)
         for i in range(0, N):
             plt.subplot(N, 1, i+1)
@@ -85,7 +85,7 @@ def plot_output(tgrid, output, yref, style='samefig', colorstyle='default'):
             plt.title('Output component $y_{%d}(t)$ and $y_{ref, %d}(t)$ (gray)' % (i + 1, i + 1))
             plt.tight_layout()
             plt.grid(True)
-    elif style is 'separate':
+    elif style == 'separate':
         for i in range(0, N):
             plt.figure(i + 1)
             plt.plot(tgrid, yref(tgrid)[i],color='0.5',linewidth=2.0)

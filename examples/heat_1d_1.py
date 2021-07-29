@@ -82,7 +82,6 @@ freqsReal = np.array([1, 2, 3, 6])
 
 # Observer-Based Robust Controller
 # Requires stabilizing operators K21 and L
-# and the transfer function values P_K(i*w_k) 
 K21 = -7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
 L = -7 * np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d(2*(N-1))]])
 IMstabmargin = 0.45
@@ -92,14 +91,12 @@ contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 # Dual Observer-Based Robust Controller
 # Requires stabilizing operators K2 and L1
-# and the transfer function values P_K(i*w_k) 
 # K2 = -7 * np.bmat([[np.atleast_2d(1), np.zeros((1, N - 1))]])
 # L1 = -7 * np.bmat([[np.zeros((N-1, 1))], [np.atleast_2d(2*(N-1))]])
-# PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
 # IMstabmargin = 0.5
 # IMstabmethod = 'poleplacement'
 # # IMstabmethod = 'LQR'
-# contr = DualObserverBasedRC(sys, freqsReal, PLvals, K2, L1, IMstabmargin, IMstabmethod)
+# contr = DualObserverBasedRC(sys, freqsReal, K2, L1, IMstabmargin, IMstabmethod)
 
 # Construct the closed-loop system
 clsys = ClosedLoopSystem(sys, contr)

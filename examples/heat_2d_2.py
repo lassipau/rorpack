@@ -66,25 +66,21 @@ L_S = K_S.T.conj() * 10
 # Construct the controller 
 
 # Observer-based robust controller
-# Requires stabilizing operators K21 and L
-# and the transfer function values P_K(i*w_k) 
+# Requires stabilizing operators K21 and L 
 K21 = K_S
 L = L_S
-PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 IMstabmargin = 0.5
 IMstabmethod = 'LQR'
-contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
+contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 
 # Dual observer-based robust controller
 # Requires stabilizing operators K2 and L1
-# and the transfer function values P_L(i*w_k) 
 # K2 = K_S
 # L1 = L_S
-# PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
 # IMstabmargin = 0.5
 # IMstabmethod = 'LQR'
-# contr = DualObserverBasedRC(sys, freqsReal, PLvals, K2, L1, IMstabmargin, IMstabmethod)
+# contr = DualObserverBasedRC(sys, freqsReal, K2, L1, IMstabmargin, IMstabmethod)
 
 # Construct the closed-loop system
 clsys = ClosedLoopSystem(sys, contr)

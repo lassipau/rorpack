@@ -110,22 +110,18 @@ freqsReal = np.array([0, 1, 2, 3])
 # and the transfer function values P_L(i*w_k)
 # K2 = -sys.B.conj().T
 # L1 = -10*sys.C.conj().T
-# PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
-# print(PLvals.shape)
 # IMstabmargin = 0.5
 # IMstabmethod = 'LQR'
-# contr = DualObserverBasedRC(sys, freqsReal, PLvals, K2, L1, IMstabmargin, IMstabmethod)
+# contr = DualObserverBasedRC(sys, freqsReal, K2, L1, IMstabmargin, IMstabmethod)
 
 
 # Observer-based controller
 # Requires stabilizing operators K21 and L
-# and the transfer function values P_K(i*w_k)
 K21 = -sys.B.conj().T
 L = -10*sys.C.conj().T
-PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 IMstabmargin = 0.5
 IMstabmethod = 'LQR'
-contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod)
+contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 
 # Construct the closed-loop system 

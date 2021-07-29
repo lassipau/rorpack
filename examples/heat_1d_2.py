@@ -119,9 +119,8 @@ freqsReal = np.array([0, 1, 2, 3, 6])
 # # Compute P_K(i*w_k) and 'CKRKvals' using Chebfun/Matlab:
 # PKvals, CKRKvals = cfi.heat_1d_2_PKvals(cfunML,freqsReal,K21fun,spgrid)
 # # Alternative (without Matlab) Computation using the FD approximation:
-# # PKvals = np.array(list(map(lambda freq: sys.P_K(freq, K21), 1j * freqsReal)))
 # # CKRKvals = None
-# contr = ObserverBasedRC(sys, freqsReal, PKvals, K21, L, IMstabmargin, IMstabmethod, CKRKvals)
+# contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod, CKRKvals)
 
 # Dual Observer-Based Robust Controller
 # Requires stabilizing operators K2 and L1
@@ -137,9 +136,8 @@ L1 = - np.ones((N,1))
 # # Compute P_K(i*w_k) and 'CKRKvals' using Chebfun/Matlab:
 # PLvals, RLBLvals = cfi.heat_1d_2_PLvals(cfunML,freqsReal,L1fun,spgrid)
 # Alternative (without Matlab) Computation using the FD approximation:
-PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
 RLBLvals = None
-contr = DualObserverBasedRC(sys, freqsReal, PLvals, K2, L1, IMstabmargin, IMstabmethod,RLBLvals)
+contr = DualObserverBasedRC(sys, freqsReal, K2, L1, IMstabmargin, IMstabmethod,RLBLvals)
 
 
 # Construct the closed-loop system 

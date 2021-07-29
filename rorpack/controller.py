@@ -333,9 +333,6 @@ class ObserverBasedRC(Controller):
         freqsReal : (, N) array_like
             The (real) frequencies (w_k)_{k=0}^q of the reference and
             disturbance signals.
-        PKvals : (N, M, P) array_like
-             Values of the transfer function P_K(.) at the complex
-             frequencies (i*w_k)_{k=0}^q.
         K21 : (N1, M1) array_like
              The matrix K2 which should be chosen so that A + B * K21
              is stable. 
@@ -346,13 +343,15 @@ class ObserverBasedRC(Controller):
         IMstabmethod : string, optional
             Stabilization of the internal model using either 'LQR' or
             'poleplacement'. The default method is 'LQR'.
-        RLBLvals : (q+1, n, m) array_like, optional
+        CKRKvals : (q+1, n, m) array_like, optional
              Values of the function :math:`(C+D*K_{21})R(.,A+B*K_{21})` 
              evaluated at the complex frequencies :math:`(i*w_k)_{k=0}^q`.
              By default, the values are computed directly using the
              parameters :math:`(A,B,C,D)` of the system.
         '''
 
+        # Values of the transfer function P_K(.) at the complex
+        # frequencies (i*w_k)_{k=0}^q.
         PKvals = np.array(list(map(lambda freq1: sys.P_K(freq1, K21), 1j * freqsReal)))
 
         # The c in front of cG1, cG2 and cK signifies the internal model 
@@ -423,7 +422,7 @@ class DualObserverBasedRC(Controller):
     Construct a Dual Observer-Based Robust Controller for a possibly unstable linear system.
     '''
 
-    def __init__(self, sys, freqsReal, PLvals, K2, L1, IMstabmargin=0.5, IMstabmethod='LQR', RLBLvals=None):
+    def __init__(self, sys, freqsReal, K2, L1, IMstabmargin=0.5, IMstabmethod='LQR', RLBLvals=None):
         '''
         Parameters
         ----------
@@ -432,9 +431,6 @@ class DualObserverBasedRC(Controller):
         freqsReal : (, N) array_like
             The (real) frequencies (w_k)_{k=0}^q of the reference and
             disturbance signals.
-        PLvals : (q+1, p, m) array_like
-             Values of the transfer function P_L(.) at the complex
-             frequencies  (i*w_k)_{k=0}^q.
         K2 : (N1, M1) array_like
              The matrix K2 which should be chosen so that A + B * K2 is stable. 
         L1 : (N2, M2) array_like
@@ -452,6 +448,11 @@ class DualObserverBasedRC(Controller):
              :math:`(A,B,C,D)` of the system.
 
         '''
+
+        # Values of the transfer function P_L(.) at the complex
+        # frequencies  (i*w_k)_{k=0}^q.
+        PLvals = np.array(list(map(lambda freq: sys.P_L(freq, L1), 1j * freqsReal)))
+
         # The c in front of cG1, cG2 and cK is just to take care of scoping.
         cG1, cG2 = construct_internal_model(freqsReal, PLvals[0].shape[0])
         cK = np.transpose(cG2)
