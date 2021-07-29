@@ -97,14 +97,14 @@ def construct_internal_model(freqs, dim_Y):
     G1 = np.zeros((dim_Z, dim_Z))
     # Alternatively, can replace -I_Y with an invertible square matrix.
     # The second block needs to remain zero.
-    G2 = np.tile(np.concatenate((-np.eye(dim_Y), np.zeros((dim_Y, dim_Y)))), (q, 1))
+    G2 = np.tile(np.concatenate((np.eye(dim_Y), np.zeros((dim_Y, dim_Y)))), (q, 1))
 
     if freqs[0] == 0:
         offset = 1
         # Alternatively, can replace -I_Y with an invertible square matrix.
         # The second block needs to remain zero.
-        G2 = np.tile(np.concatenate((-np.eye(dim_Y), np.zeros((dim_Y, dim_Y)))), (q - 1, 1))
-        G2 = np.concatenate((-np.eye(dim_Y), G2))
+        G2 = np.tile(np.concatenate((np.eye(dim_Y), np.zeros((dim_Y, dim_Y)))), (q - 1, 1))
+        G2 = np.concatenate((np.eye(dim_Y), G2))
 
     for i in range(0, q - offset):
         idx = slice((2 * i + offset) * dim_Y, (2 * (i + 1) + offset) * dim_Y)
@@ -303,7 +303,8 @@ class LowGainRC(Controller):
         if not is_stable(stab_sys.A):
             raise Exception('System is not stable, cannot construct the controller')
 
-        G1, G2 = construct_internal_model(freqsReal, Pvals[0].shape[0])
+        G1, G2tmp = construct_internal_model(freqsReal, Pvals[0].shape[0])
+        G2 = -G2tmp
         K = IMstabilization_dissipative(freqsReal, Pvals)
         if scipy.sparse.issparse(stab_sys.A):
             A0 = np.bmat([[stab_sys.A.todense(), np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
@@ -555,8 +556,9 @@ class PassiveRC(Controller):
         if not is_stable(stab_sys.A):
             raise Exception('System is not stable, cannot construct the controller')
 
-        G1, G2 = construct_internal_model(freqsReal, dim_Y)
-        K = -G2.conj().T
+        G1, G2tmp = construct_internal_model(freqsReal, dim_Y)
+        G2 = -G2tmp
+        K = G2tmp.conj().T
         if scipy.sparse.issparse(sys.A):
             A0 = np.bmat([[stab_sys.A.todense(), np.zeros((stab_sys.B.shape[0], G1.shape[1]))], [np.dot(G2, stab_sys.C), G1]])
         else:
