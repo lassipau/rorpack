@@ -124,7 +124,7 @@ class ClosedLoopSystem:
             The output of the simulated closed-loop system evaluated 
             at the points in tgrid.
         error : (N2, M2) array_like
-            The regulation error regulation error e(t)=y(t)-yref(t)        
+            The regulation error e(t)=y(t)-yref(t)        
             evaluated at the points in tgrid.
         control : (N1, M1) array_like
             The control input of the simulated system at the points in tgrid.
@@ -140,6 +140,6 @@ class ClosedLoopSystem:
         xe = sol.y
         error = np.dot(np.array(self.Ce), xe) + np.dot(np.array(self.De), np.vstack((wdist(tgrid), yref(tgrid))))
         output = error + yref(tgrid)
-        control = np.dot(np.array(self.Ce), xe)
+        control = np.dot(np.array(self.CK), xe)
         t2 = time.time()
         return sol, output, error, control, t2 - t1
