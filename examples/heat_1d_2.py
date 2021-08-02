@@ -120,7 +120,7 @@ freqsReal = np.array([0, 1, 2, 3, 6])
 # PKvals, CKRKvals = cfi.heat_1d_2_PKvals(cfunML,freqsReal,K21fun,spgrid)
 # # Alternative (without Matlab) Computation using the FD approximation:
 # # CKRKvals = None
-# contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod, CKRKvals)
+# contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
 
 # Dual Observer-Based Robust Controller
 # Requires stabilizing operators K2 and L1

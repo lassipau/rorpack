@@ -107,7 +107,6 @@ freqsReal = np.array([0, 1, 2, 3])
 
 # Dual observer-based controller
 # Requires stabilizing operators K2 and L1
-# and the transfer function values P_L(i*w_k)
 # K2 = -sys.B.conj().T
 # L1 = -10*sys.C.conj().T
 # IMstabmargin = 0.5
