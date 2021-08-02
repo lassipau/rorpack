@@ -319,7 +319,7 @@ class LowGainRC(Controller):
         Controller.__init__(self, G1, G2, eps * K, None, eps)
 
 
-class ObserverBasedRC(Controller):
+class ObserverBasedRC_old(Controller):
     '''
     Construct an Observer-Based Robust Controller for a possibly unstable linear system.
     '''
@@ -414,6 +414,41 @@ class ObserverBasedRC(Controller):
         G1 = np.bmat([[cG1, np.zeros((dim1, dim2))], [G11, G12]])
         G2 = np.vstack((cG2, -L))
         K = np.hstack((cK, K2))
+        Controller.__init__(self, G1, G2, K, None, 1.0)
+
+
+class ObserverBasedRC(Controller):
+    '''
+    Construct an Observer-Based Robust Controller for a possibly unstable linear system.
+    '''
+
+    def __init__(self, sys, freqsReal, K21, L, IMstabmargin=0.5, IMstabmethod='LQR'):
+        
+        dim_X = sys.A.shape[0]
+        dim_Y = sys.C.shape[0]
+        dim_U = sys.B.shape[1]
+
+        if dim_Y != dim_U:
+            raise Exception("The system has an unequal number of inputs and outputs, the observer-based controller design cannot be completed (in this form).")
+
+        # The c in front of cG1, cG2 and cK signifies the internal model 
+        # part of the controller
+        cG1, cG2 = construct_internal_model(freqsReal, dim_Y)
+
+        dim_Z = cG1.shape[0]
+
+        # Find H as the solution of G1*H=H*(A+B*K21)+G2*(C+D*K21) and define B1
+        H = sp.linalg.solve_sylvester(cG1, -sys.A - np.dot(sys.B, K21), np.dot(cG2, sys.C + np.dot(sys.D, K21)))
+        B1 = np.dot(H, sys.B) + np.dot(cG2, sys.D)
+
+        K1 = IMstabilization_general(freqsReal, np.atleast_2d(dim_Y, dim_U), cG1, B1, IMstabmargin, IMstabmethod)
+
+        K2 = K21 + np.dot(K1, H)
+        G11 = np.dot(sys.B + np.dot(L, sys.D), K1)
+        G12 = sys.A + np.dot(sys.B, K2) + np.dot(L, sys.C + np.dot(sys.D, K2))
+        G1 = np.bmat([[cG1, np.zeros((dim_Z, dim_X))], [G11, G12]])
+        G2 = np.vstack((cG2, -L))
+        K = np.hstack((K1, K2))
         Controller.__init__(self, G1, G2, K, None, 1.0)
 
 
