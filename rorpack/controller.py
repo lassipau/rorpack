@@ -423,7 +423,26 @@ class ObserverBasedRC(Controller):
     '''
 
     def __init__(self, sys, freqsReal, K21, L, IMstabmargin=0.5, IMstabmethod='LQR'):
-        
+        '''
+        Parameters
+        ----------
+        sys : LinearSystem
+            The controlled system.
+        freqsReal : (, N) array_like
+            The (real) frequencies (w_k)_{k=0}^q of the reference and
+            disturbance signals.
+        K21 : (N1, M1) array_like
+             The matrix K2 which should be chosen so that A + B * K21
+             is stable. 
+        L : (N2, M2) array_like
+             The matrix L1 which should be chosen so that A + L * C is stable. 
+        IMstabmargin : float, optional
+            The desired stability margin for the internal model. The default value is 0.5.
+        IMstabmethod : string, optional
+            Stabilization of the internal model using either 'LQR' or
+            'poleplacement'. The default method is 'LQR'.
+        '''
+
         dim_X = sys.A.shape[0]
         dim_Y = sys.C.shape[0]
         dim_U = sys.B.shape[1]
@@ -431,7 +450,7 @@ class ObserverBasedRC(Controller):
         if dim_Y != dim_U:
             raise Exception("The system has an unequal number of inputs and outputs, the observer-based controller design cannot be completed (in this form).")
 
-        # The c in front of cG1, cG2 and cK signifies the internal model 
+        # The c in front of cG1 and cG2 signifies the internal model 
         # part of the controller
         cG1, cG2 = construct_internal_model(freqsReal, dim_Y)
 
@@ -452,7 +471,7 @@ class ObserverBasedRC(Controller):
         Controller.__init__(self, G1, G2, K, None, 1.0)
 
 
-class DualObserverBasedRC(Controller):
+class DualObserverBasedRC_old(Controller):
     '''
     Construct a Dual Observer-Based Robust Controller for a possibly unstable linear system.
     '''
@@ -548,6 +567,61 @@ class DualObserverBasedRC(Controller):
         dim1 = G12.shape[0]
         dim2 = cG1.shape[1] + G11.shape[1] - G12.shape[1]
         G1 = np.bmat([[cG1, G11], [np.zeros((dim1, dim2)), G12]])
+        G2 = np.vstack((cG2, L))
+        K = np.hstack((cK, -K2))
+        Controller.__init__(self, G1, G2, K, None, 1.0)
+
+
+class DualObserverBasedRC(Controller):
+    '''
+    Construct a Dual Observer-Based Robust Controller for a possibly unstable linear system.
+    '''
+
+    def __init__(self, sys, freqsReal, K2, L1, IMstabmargin=0.5, IMstabmethod='LQR'):
+        '''
+        Parameters
+        ----------
+        sys : LinearSystem
+            The controlled system.
+        freqsReal : (, N) array_like
+            The (real) frequencies (w_k)_{k=0}^q of the reference and
+            disturbance signals.
+        K2 : (N1, M1) array_like
+             The matrix K2 which should be chosen so that A + B * K2 is stable. 
+        L1 : (N2, M2) array_like
+             The matrix L1 which should be chosen so that A + L1 * C is stable. 
+        IMstabmargin : float, optional
+            The desired stability margin for the internal model. The default
+            value is 0.5.
+        IMstabmethod : string, optional
+            Stabilization of the internal model using either 'LQR' or
+            'poleplacement'. The default method is 'LQR'.
+
+        '''
+
+        dim_X = sys.A.shape[0]
+        dim_Y = sys.C.shape[0]
+        dim_U = sys.B.shape[1]
+
+        if dim_Y != dim_U:
+            raise Exception("The system has an unequal number of inputs and outputs, the observer-based controller design cannot be completed (in this form).")
+
+        # The c in front of cG1 and cG2 signifies the internal model 
+        # part of the controller
+        cG1, cG2 = construct_internal_model(freqsReal, dim_Y)
+        cK = np.transpose(cG2)
+
+        dim_Z = cG1.shape[0]
+
+        # Find H as the solution of H*G1=(A+L1*C)*H+(B+L1*D)*K and define C1
+        H = sp.linalg.solve_sylvester(-sys.A - np.dot(L1, sys.C), cG1, np.dot(sys.B + np.dot(L1, sys.D), cK))
+        C1 = np.dot(sys.C, H) + np.dot(sys.D, cK)
+
+        cG2 = IMstabilization_general(freqsReal, np.atleast_2d(dim_Y, dim_U), cG1.conj().T, C1.conj().T, IMstabmargin, IMstabmethod).conj().T
+        L = L1 + np.dot(H, cG2)
+        G11 = np.dot(cG2, sys.C + np.dot(sys.D, K2))
+        G12 = sys.A + np.dot(sys.B, K2) + np.dot(L, sys.C + np.dot(sys.D, K2))
+        G1 = np.bmat([[cG1, G11], [np.zeros((dim_X, dim_Z)), G12]])
         G2 = np.vstack((cG2, L))
         K = np.hstack((cK, -K2))
         Controller.__init__(self, G1, G2, K, None, 1.0)

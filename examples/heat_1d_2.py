@@ -137,7 +137,7 @@ L1 = - np.ones((N,1))
 # PLvals, RLBLvals = cfi.heat_1d_2_PLvals(cfunML,freqsReal,L1fun,spgrid)
 # Alternative (without Matlab) Computation using the FD approximation:
 RLBLvals = None
-contr = DualObserverBasedRC(sys, freqsReal, K2, L1, IMstabmargin, IMstabmethod,RLBLvals)
+contr = DualObserverBasedRC(sys, freqsReal, K2, L1, IMstabmargin, IMstabmethod)
 
 
 # Construct the closed-loop system 
