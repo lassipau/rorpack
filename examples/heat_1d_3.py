@@ -116,11 +116,39 @@ freqsReal = np.array([0, 1, 2, 3])
 
 # Observer-based controller
 # Requires stabilizing operators K21 and L
-K21 = -sys.B.conj().T
-L = -10*sys.C.conj().T
-IMstabmargin = 0.5
-IMstabmethod = 'LQR'
-contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
+# K21 = -sys.B.conj().T
+# L = -10*sys.C.conj().T
+# IMstabmargin = 0.5
+# IMstabmethod = 'LQR'
+# contr = ObserverBasedRC(sys, freqsReal, K21, L, IMstabmargin, IMstabmethod)
+
+
+# A Reduced Order Observer Based Robust Controller
+# The construction of the controller uses a Galerkin approximation
+# of the heat system:
+# The Galerkin approximation used in the controller
+# design is a lower dimensional numerical approximation
+# of the PDE model.
+Nlow = 50
+sysApprox, spgrid_unused = construct_heat_1d_3(Nlow, cfun, IB1, IB2, IC1, IC2)
+# SysApprox.AN = sysApprox.A
+# SysApprox.BN = sysApprox.B
+# SysApprox.CN = sysApprox.C
+# SysApprox.D = sysApprox.D
+
+# Parameters for the stabilization step of the controller design
+alpha1 = 1.5
+alpha2 = 1
+Q0 = np.eye(IMdim(freqsReal, sysApprox.C.shape[0])) # Size = dimension of the IM 
+Q1 = np.eye(sysApprox.A.shape[0]) # Size = dim(V_N)
+Q2 = np.eye(sysApprox.A.shape[0]) # Size = dim(V_N)
+R1 = np.eye(sysApprox.C.shape[0]) # Size = dim(Y)
+R2 = np.eye(sysApprox.B.shape[1]) # Size = dim(U)
+
+# Size of the final reduced-order observer part of the controller
+ROMorder = 3
+
+contr = ObserverBasedROMRC(sysApprox, freqsReal, alpha1, alpha2, R1, R2, Q0, Q1, Q2, ROMorder)
 
 
 # Construct the closed-loop system 

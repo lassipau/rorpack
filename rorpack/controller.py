@@ -15,8 +15,10 @@ Copyright (C) 2019 by Lassi Paunonen and the developers of RORPack.
 
 
 import numbers
+import time
 import numpy as np
 import scipy as sp
+import control
 from scipy.signal import place_poles
 from .utilities import *
 
@@ -111,6 +113,29 @@ def construct_internal_model(freqs, dim_Y):
         G1[idx, idx] = freqs[i + offset] * np.bmat([[np.zeros((dim_Y, dim_Y)), np.eye(dim_Y)], [-np.eye(dim_Y), np.zeros((dim_Y, dim_Y))]])
     return G1, G2
 
+
+def IMdim(freqs, dim_Y):
+    '''
+    # Compute the dimension of the internal model.
+
+    Parameters
+    ----------
+    freqs : (, N) array_like
+        The (real) frequencies of the reference and disturbance signals.
+        Ordered so that 0=w_0<w_1<...<w_q (the list may or may not include the zero frequency).
+    dim_Y : int
+        The dimension of the output space Y of the system.
+
+    Returns
+    -------   
+    dim_Z0 : int
+        The dimension of the internal model.
+    '''
+
+    if freqs[0] == 0:
+        return (2*len(freqs) - 1)*dim_Y
+    else:
+        return 2*len(freqs)*dim_Y
 
 def IMstabilization_dissipative(freqs, Pvals):
     '''
@@ -733,3 +758,222 @@ class ApproximateRC(Controller):
         else:
             eps = np.atleast_1d(epsgain)[0]
         Controller.__init__(self, G1, G2, eps * K, None, eps)
+
+
+class ObserverBasedROMRC(Controller):
+    '''
+    Construct a Reduced Order Robust Controller for parabolic systems.
+    '''
+
+    def __init__(self, sysApprox, freqsReal, alpha1, alpha2, R1, R2, Q0, Q1, Q2, ROMorder):
+        '''
+        Parameters
+        ----------
+        sysApprox : LinearSystem
+            The Galerkin approximation (A^N,B^N,C^N,D) of the control system for the controller design.
+        freqsReal : (, N) array_like
+            The (real) frequencies (w_k)_{k=0}^q of the reference and disturbance signals.
+        alpha1, alpha2 : integer
+            Design parameters to determine the closed-loop stability margin. Required to be positive.
+        R1, R2, Q0, Q1, Q2 : integer/(N1, M1) array_like
+            TODO
+        ROMorder
+            order of the reduced-order observer in the controller.
+            The model reduction step can be skipped by setting 'ROMorder=None'
+        '''
+
+        AN = sysApprox.A
+        BN = sysApprox.B
+        CN = sysApprox.C
+        D = sysApprox.D
+
+        dim_X = AN.shape[0]
+        dim_Y = CN.shape[0]
+        dim_U = BN.shape[1]
+
+        # Check the consistency of the controller design parameters
+
+        alpha1_check = np.isreal(alpha1) and np.ndim(alpha1) == 0 and alpha1 > 0
+        alpha2_check = np.isreal(alpha2) and np.ndim(alpha2) == 0 and alpha2 > 0
+
+        R1_check = np.allclose(R1, np.conj(R1).T) and np.all(np.linalg.eigvals(R1) > 0)
+        R2_check = np.allclose(R2, np.conj(R2).T) and np.all(np.linalg.eigvals(R2) > 0)
+
+        if not alpha1_check or not alpha2_check:
+            raise Exception('"alpha1" and "alpha2" need to be positive!')
+        elif not R1_check or not R2_check:
+            raise Exception('"R1" and "R2" need to be positive definite')
+
+        # Construct the internal model
+        cG1, cG2 = construct_internal_model(freqsReal, dim_Y)
+        dim_Z0 = cG1.shape[0]
+
+
+        # If R1, R2, Q0, Q1, or Q2 have scalar values, these are interpreted as
+        # "scalar times identity".
+        if dim_Y > 1 and np.ndim(R1) == 0:
+            R1 = R1*np.eye(dim_Y)
+        
+        if dim_Y > 1 and np.ndim(R2) == 0:
+            R2 = R2*np.eye(dim_Y)
+
+        if dim_Z0 > 1 and np.ndim(Q0) == 0:
+            Q0 = Q0*np.eye(dim_Z0)
+
+        if dim_X > 1 and np.ndim(Q1) == 0:
+            Q1 = Q1*np.eye(dim_X)
+
+        if dim_X > 1 and np.ndim(Q2) == 0:
+            Q2 = Q2*np.eye(dim_X)
+
+
+
+        # Check the consistency of the dimensions of R1, R2, Q0, Q1, and Q2
+        if not R1.shape == (dim_Y, dim_Y):
+            raise Exception('Dimensions of "R1" are incorrect! (should be [dimY,dimY]).')
+
+        if not R2.shape == (dim_U, dim_U):
+            raise Exception('Dimensions of "R1" are incorrect! (should be [dimU,dimU]).')
+
+        if not Q0.shape[1] == dim_Z0:
+            raise Exception('Dimensions of "Q0" are incorrect!')
+
+        if not Q1.shape[0] == dim_X:
+            raise Exception('Dimensions of "Q1" are incorrect!')
+
+        if not Q2.shape[1] == dim_X:
+            raise Exception('Dimensions of "Q2" are incorrect!')
+
+
+        # Form the extended system (As,Bs)
+        As = np.bmat([[cG1, np.dot(cG2, CN)], [np.zeros((dim_X, dim_Z0)), AN]])
+        Bs = np.bmat([[np.dot(cG2, D)], [BN]])
+
+        Qs = sp.linalg.block_diag(Q0, Q2)
+
+
+        # Stabilize the pairs (CN,AN+alpha1) and (As+alpha2,Bs) using LQR/LQG design
+
+        # Stabilize the pair (CN,AN+alpha1)
+        t1 = time.time()
+        B_ext = np.bmat([[np.conj(CN).T, np.zeros((dim_X, dim_X))]])
+        print(B_ext.shape)
+        S_ext = np.bmat([[np.zeros((dim_X, dim_Y)), Q1]])
+        R1_ext = scipy.linalg.block_diag(R1, -np.eye(dim_X))
+        
+        # Following the matlab version use of icare we have E = I and G = 0.
+        q = np.zeros(((AN + alpha1*np.eye(dim_X)).shape[0], (AN + alpha1*np.eye(dim_X)).shape[1]))
+        X = scipy.linalg.solve_continuous_are((AN + alpha1*np.eye(dim_X)), B_ext, q, R1_ext, s=S_ext)
+        # E = I
+        E = np.eye(X.shape[1])
+        # K = R^-1(B'XE + S')
+        L_ext_adj  = np.dot(np.linalg.inv(R1_ext), np.dot(np.dot(B_ext.T, X), E) + S_ext.T)
+        # L = EIG(A+G*X*E-B*K,E)
+        # G = 0 -> G*X*E = zeros(dim(X,1), dim(E,2))
+        evals = np.linalg.eigvals((AN + alpha1*np.eye(dim_X)) + np.zeros((X.shape[0], E.shape[1])) - np.dot(B_ext, L_ext_adj))
+        # [X, K, L] = [~,L_ext_adj,evals] = icare((AN+alpha1*eye(dimX))',B_ext,0,R1_ext,S_ext,[],[]);
+
+        # Using the control library:
+        # X, evals, G = control.matlab.care((AN + alpha1*np.eye(dim_X)), B_ext, 0, R1_ext, S_ext, E=None)
+        # E = np.eye(X.shape[1])
+        # L_ext_adj  = np.dot(np.linalg.inv(R1_ext), np.dot(np.dot(B_ext.T, X), E) +S_ext.T)
+        # X, evals, L_ext_adj, evals = control.matlab.care((AN+alpha1*eye(dimX)),B_ext,0,R1_ext,S_ext)
+        
+        # L = -L_ext_adj(1:dimY,:)';
+        L = -np.conj(L_ext_adj[0:dim_Y, :]).T
+        t2 = time.time()
+        t = t2 - t1
+        print('Stabilization of the pair (CN,AN+alpha1) took %f seconds' % t)
+        
+        if np.amax(np.real(evals)) >= 0:
+            raise Exception('Stabilization of the pair (CN,AN+alpha1) failed!')
+        
+        # Stabilize the pair (As+alpha2,Bs)
+        t3 = time.time()
+        Bs_ext = np.bmat([[Bs, np.zeros((dim_Z0 + dim_X, dim_Z0 + dim_X))]])
+        Ss_ext = np.bmat([[np.zeros((dim_Z0 + dim_X, dim_Y)), np.conj(Qs).T]])
+        R2_ext = scipy.linalg.block_diag(R2, -np.eye(dim_Z0 + dim_X))
+        
+        # Following the matlab version use of icare we have E = I and G = 0.
+        qs = np.zeros(((As + alpha2*np.eye(dim_Z0 + dim_X)).shape[0], (As + alpha2*np.eye(dim_Z0 + dim_X)).shape[1]))
+        Xs = scipy.linalg.solve_continuous_are((As + alpha2*np.eye(dim_Z0 + dim_X)), Bs_ext, qs, R2_ext, s=Ss_ext)
+        # K = R^-1(B'XE + S')
+        # Es = I
+        Es = np.eye(Xs.shape[1])
+        K_ext  = np.dot(np.linalg.inv(R2_ext), np.dot(np.dot(Bs_ext.T, Xs), Es) + Ss_ext.T)
+        # L = EIG(A+G*X*E-B*K,E)
+        # G = 0 -> G*X*E = zeros(dim(X,1), dim(E,2))
+        evals = np.linalg.eigvals((As + alpha2*np.eye(dim_Z0 + dim_X)) + np.zeros((Xs.shape[0], Es.shape[1])) - np.dot(Bs_ext, K_ext))
+        # [X, K, L] = [~,K_ext,evals] = icare(As+alpha2*eye(dimZ0+dimX),Bs_ext,0,R2_ext,Ss_ext,[],[]);
+
+        # Using the control library:
+        # Xs, evals, Gs = control.care((As + alpha2*np.eye(dim_Z0 + dim_X)), Bs_ext, 0, R2_ext, Ss_ext, E=None)
+        # Es = np.eye(Xs.shape[1])
+        # K_ext  = np.dot(np.linalg.inv(R2_ext), np.dot(np.dot(Bs_ext.T, X), Es) + Ss_ext.T)
+        
+        # K = -K_ext(1:dimU,:);
+        K = -K_ext[0:dim_U, :]
+        t4 = time.time()
+        t = t4 - t3
+        print('Stabilization of the pair (As+alpha2,Bs) took %f seconds' % t)
+
+        if np.amax(np.real(evals)) >= 0:
+            raise Exception('Stabilization of the pair (As+alpha2,Bs) failed!')
+
+
+        # Decompose the control gain K into K=[K1N,K2N]
+        K1N = K[:, 0:dim_Z0]
+        K2N = K[:, dim_Z0:]
+
+
+        # Complete the model reduction step of the controller design. If the model
+        # reduction fails (for example due to too high reduction order), the
+        # controller design is by default completed without the model reduction.
+        if ROMorder is not None:
+            t5 = time.time()
+            # rsys = balred(ss(AN+L*CN,[BN+L*D,L],K2N,zeros(dimU,dimU+dimY)),ROMorder);
+            rsys = control.balred(control.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder)
+            t6 = time.time()
+            t = t6 - t5
+            print('Model reduction step took %f seconds' % t)
+                
+            ALr = rsys.A
+            Br_full = rsys.B
+            BLr = Br_full[:, 0:dim_U]
+            Lr = Br_full[:, dim_U:]
+            K2r = rsys.C
+            try:
+                t5 = time.time()
+                # rsys = balred(ss(AN+L*CN,[BN+L*D,L],K2N,zeros(dimU,dimU+dimY)),ROMorder);
+                rsys = control.balred(control.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder)
+                t6 = time.time()
+                t = t6 - t5
+                print('Model reduction step took %f seconds' % t)
+                
+                ALr = rsys.A
+                Br_full = rsys.B
+                BLr = Br_full[:, 0:dim_U]
+                Lr = Br_full[:, dim_U:]
+                K2r = rsys.C
+            except:
+                print('Model reduction step failed! Modify "ROMorder", or check that "balred" is available. Proceeding without model reduction (with option "ROMorder=None")')
+
+                ALr = AN + np.dot(L, CN)
+                BLr = BN + np.dot(L, D)
+                Lr = L
+                K2r = K2N
+        else:
+            print('Constructing the controller without model reduction.')
+            
+            ALr = AN + np.dot(L, CN)
+            BLr = BN + np.dot(L, D)
+            Lr = L
+            K2r = K2N
+
+
+        # Construct the controller matrices (G1,G2,K).
+        G1 = np.bmat([[cG1, np.zeros((dim_Z0, ALr.shape[0]))], [np.dot(BLr, K1N), ALr + np.dot(BLr, K2r)]])
+        G2 = np.bmat([[cG2], [-Lr]])
+        K = np.bmat([[K1N, K2r]])
+        Dc = np.zeros((dim_U, dim_Y))
+        Controller.__init__(self, G1, G2, K, Dc, 1.0)
