@@ -19,8 +19,6 @@ from rorpack.controller import *
 from rorpack.closed_loop_system import ClosedLoopSystem
 from rorpack.plotting import *
 from laplacian import diffusion_op_1d
-# import sys as sy
-# np.set_printoptions(threshold=sy.maxsize)
 
 def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2, printcfun=True):
     spgrid = np.linspace(0, 1, N+1)
@@ -38,7 +36,7 @@ def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2, printcfun=True):
 
     B1 = 1/(IB1[1] - IB1[0])*np.logical_and(spgrid >= IB1[0], 
             spgrid <= IB1[1])
-    # Floating point errors avoided with np.isclose()    
+    # Floating point rounding errors avoided with np.isclose()    
     B2 = 1/(IB2[1] - IB2[0])*np.logical_and(np.logical_or(spgrid >= IB2[0],
             np.isclose(spgrid - IB2[0], 0)), np.logical_or(spgrid <= IB2[1], np.isclose(spgrid - IB2[1], 0)))
     B = np.stack((B1, B2), axis=1)
@@ -134,10 +132,6 @@ freqsReal = np.array([0, 1, 2, 3, 6])
 # of the PDE model.
 Nlow = 50
 sysApprox, spgrid_unused = construct_heat_1d_3(Nlow, cfun, IB1, IB2, IC1, IC2, False)
-# SysApprox.AN = sysApprox.A
-# SysApprox.BN = sysApprox.B
-# SysApprox.CN = sysApprox.C
-# SysApprox.D = sysApprox.D
 
 # Parameters for the stabilization step of the controller design
 alpha1 = 1.5
@@ -152,18 +146,6 @@ R2 = np.eye(sysApprox.B.shape[1]) # Size = dim(U)
 ROMorder = 3
 
 contr = ObserverBasedROMRC(sysApprox, freqsReal, alpha1, alpha2, R1, R2, Q0, Q1, Q2, ROMorder)
-# print("This is G1")
-# print(contr.G1.shape)
-# print(contr.G1)
-# print("This is G2")
-# print(contr.G2.shape)
-# print(contr.G2)
-# print("This is K")
-# print(contr.K.shape)
-# print(contr.K)
-# print("This is Dc")
-# print(contr.Dc.shape)
-# print(contr.Dc)
 
 # Construct the closed-loop system 
 clsys = ClosedLoopSystem(sys, contr)

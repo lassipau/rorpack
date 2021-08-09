@@ -253,4 +253,16 @@ Xiaodong Xu and Stevan Dubljevic.
   infinite-dimensional systems.
 \newblock {\em Automatica J. IFAC}, 83:170--178, 2017.
 
+\bibitem{PauPha20}
+L.~{Paunonen} and D.~{Phan}.
+\newblock Reduced order controller design for robust output regulation of
+  parabolic systems.
+\newblock {\em IEEE Trans. Automat. Control}, 65(6):2480--2493, 2020.
+
+\bibitem{PhaPau21}
+Duy {Phan} and Lassi {Paunonen}.
+\newblock Finite-dimensional controllers for robust regulation of boundary
+  control systems.
+\newblock {\em Math. Control Relat. Fields}, 11(1):95--117, 2021.
+
 \end{thebibliography}
