@@ -19,16 +19,18 @@ from rorpack.controller import *
 from rorpack.closed_loop_system import ClosedLoopSystem
 from rorpack.plotting import *
 from laplacian import diffusion_op_1d
+# import sys as sy
+# np.set_printoptions(threshold=sy.maxsize)
 
-
-def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2):
+def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2, printcfun=True):
     spgrid = np.linspace(0, 1, N+1)
 
-    plt.plot(spgrid,cfun(spgrid))
-    plt.title('The thermal diffusivity $c(x)$ of the material')
-    plt.tight_layout()
-    plt.grid(True)
-    plt.show()
+    if printcfun:
+        plt.plot(spgrid,cfun(spgrid))
+        plt.title('The thermal diffusivity $c(x)$ of the material')
+        plt.tight_layout()
+        plt.grid(True)
+        plt.show()
 
     h = spgrid[1]-spgrid[0]
     DiffOp, spgrid = diffusion_op_1d(spgrid, cfun, 'ND')
@@ -36,8 +38,9 @@ def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2):
 
     B1 = 1/(IB1[1] - IB1[0])*np.logical_and(spgrid >= IB1[0], 
             spgrid <= IB1[1])
-    B2 = 1/(IB2[1] - IB2[0])*np.logical_and(spgrid >= IB2[0],
-            spgrid <= IB2[1])
+    # Floating point errors avoided with np.isclose()    
+    B2 = 1/(IB2[1] - IB2[0])*np.logical_and(np.logical_or(spgrid >= IB2[0],
+            np.isclose(spgrid - IB2[0], 0)), np.logical_or(spgrid <= IB2[1], np.isclose(spgrid - IB2[1], 0)))
     B = np.stack((B1, B2), axis=1)
     C1 = h/(IC1[1] - IC1[0])*np.logical_and(spgrid >= IC1[0],
             spgrid <= IC1[1])
@@ -54,9 +57,9 @@ def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2):
 N = 100
 
 # The spatially varying thermal diffusivity of the material
-cfun = lambda x: np.ones(np.atleast_1d(x).shape)
-cfun = lambda x: 1+x
-cfun = lambda x: 1-2*x*(1-2*x)
+# cfun = lambda x: np.ones(np.atleast_1d(x).shape)
+# cfun = lambda x: 1+x
+# cfun = lambda x: 1-2*x*(1-2*x)
 cfun = lambda x: 1+.5*np.cos(5/2*np.pi*x)
 # Note: Lower diffusivity is difficult for the Low-Gain and Passive controllers
 # cfun = lambda x: .2-.4*x*(1-x)
@@ -93,7 +96,7 @@ sys, spgrid = construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2)
 # wdist = lambda t: np.zeros(np.atleast_1d(t).shape)
 yref = lambda t: np.vstack((2*np.ones(np.atleast_1d(t).shape), 2*np.cos(3*t)+np.sin(2*t)))
 wdist = lambda t: np.atleast_2d(6*np.cos(t))
-freqsReal = np.array([0, 1, 2, 3])
+freqsReal = np.array([0, 1, 2, 3, 6])
 
 
 
@@ -130,7 +133,7 @@ freqsReal = np.array([0, 1, 2, 3])
 # design is a lower dimensional numerical approximation
 # of the PDE model.
 Nlow = 50
-sysApprox, spgrid_unused = construct_heat_1d_3(Nlow, cfun, IB1, IB2, IC1, IC2)
+sysApprox, spgrid_unused = construct_heat_1d_3(Nlow, cfun, IB1, IB2, IC1, IC2, False)
 # SysApprox.AN = sysApprox.A
 # SysApprox.BN = sysApprox.B
 # SysApprox.CN = sysApprox.C
@@ -149,7 +152,18 @@ R2 = np.eye(sysApprox.B.shape[1]) # Size = dim(U)
 ROMorder = 3
 
 contr = ObserverBasedROMRC(sysApprox, freqsReal, alpha1, alpha2, R1, R2, Q0, Q1, Q2, ROMorder)
-
+# print("This is G1")
+# print(contr.G1.shape)
+# print(contr.G1)
+# print("This is G2")
+# print(contr.G2.shape)
+# print(contr.G2)
+# print("This is K")
+# print(contr.K.shape)
+# print(contr.K)
+# print("This is Dc")
+# print(contr.Dc.shape)
+# print(contr.Dc)
 
 # Construct the closed-loop system 
 clsys = ClosedLoopSystem(sys, contr)

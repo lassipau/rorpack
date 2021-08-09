@@ -857,30 +857,51 @@ class ObserverBasedROMRC(Controller):
         # Stabilize the pair (CN,AN+alpha1)
         t1 = time.time()
         B_ext = np.bmat([[np.conj(CN).T, np.zeros((dim_X, dim_X))]])
-        print(B_ext.shape)
+        # print("B_ext is")
+        # print(B_ext.shape)
+        # print(B_ext)
         S_ext = np.bmat([[np.zeros((dim_X, dim_Y)), Q1]])
+        # print("S_ext is")
+        # print(S_ext.shape)
+        # print(S_ext)
         R1_ext = scipy.linalg.block_diag(R1, -np.eye(dim_X))
+        # print("R1_ext is")
+        # print(R1_ext.shape)
+        # print(R1_ext)
         
         # Following the matlab version use of icare we have E = I and G = 0.
-        q = np.zeros(((AN + alpha1*np.eye(dim_X)).shape[0], (AN + alpha1*np.eye(dim_X)).shape[1]))
-        X = scipy.linalg.solve_continuous_are((AN + alpha1*np.eye(dim_X)), B_ext, q, R1_ext, s=S_ext)
+        # q = np.zeros(((AN + alpha1*np.eye(dim_X)).shape[0], (AN + alpha1*np.eye(dim_X)).shape[1]))
+        # X = scipy.linalg.solve_continuous_are((AN + alpha1*np.eye(dim_X)), B_ext, q, R1_ext, s=S_ext)
         # E = I
-        E = np.eye(X.shape[1])
+        # E = np.eye(X.shape[1])
         # K = R^-1(B'XE + S')
-        L_ext_adj  = np.dot(np.linalg.inv(R1_ext), np.dot(np.dot(B_ext.T, X), E) + S_ext.T)
+        # L_ext_adj  = np.dot(np.linalg.inv(R1_ext), np.dot(np.dot(B_ext.T, X), E) + S_ext.T)
+        # print(L_ext_adj)
         # L = EIG(A+G*X*E-B*K,E)
         # G = 0 -> G*X*E = zeros(dim(X,1), dim(E,2))
-        evals = np.linalg.eigvals((AN + alpha1*np.eye(dim_X)) + np.zeros((X.shape[0], E.shape[1])) - np.dot(B_ext, L_ext_adj))
+        # evals = np.linalg.eigvals((AN + alpha1*np.eye(dim_X)) + np.zeros((X.shape[0], E.shape[1])) - np.dot(B_ext, L_ext_adj))
         # [X, K, L] = [~,L_ext_adj,evals] = icare((AN+alpha1*eye(dimX))',B_ext,0,R1_ext,S_ext,[],[]);
 
         # Using the control library:
-        # X, evals, G = control.matlab.care((AN + alpha1*np.eye(dim_X)), B_ext, 0, R1_ext, S_ext, E=None)
-        # E = np.eye(X.shape[1])
-        # L_ext_adj  = np.dot(np.linalg.inv(R1_ext), np.dot(np.dot(B_ext.T, X), E) +S_ext.T)
+        q = np.zeros(((AN + alpha1*np.eye(dim_X)).shape[0], (AN + alpha1*np.eye(dim_X)).shape[1]))
+        e = np.eye(q.shape[0], q.shape[1])
+        # print("A is")
+        # print((AN + alpha1*np.eye(dim_X)).conj().T.shape)
+        # print((AN + alpha1*np.eye(dim_X)).conj().T)
+        X1, evals, L_ext_adj = control.care(A=(AN + alpha1*np.eye(dim_X)).conj().T, B=B_ext, Q=q, R=R1_ext, S=S_ext, E=e)
+        # print("L_ext_adj is")
+        # print(L_ext_adj.shape)
+        # print(L_ext_adj)
+        # L_ext_adj  = np.dot(np.linalg.inv(R1_ext), np.dot(np.dot(B_ext.T, X), e) + S_ext.T)
+        #print(L_ext_adj)
         # X, evals, L_ext_adj, evals = control.matlab.care((AN+alpha1*eye(dimX)),B_ext,0,R1_ext,S_ext)
+        # print("testing")
         
         # L = -L_ext_adj(1:dimY,:)';
         L = -np.conj(L_ext_adj[0:dim_Y, :]).T
+        # print("This is L")
+        # print(L.shape)
+        # print(L)
         t2 = time.time()
         t = t2 - t1
         print('Stabilization of the pair (CN,AN+alpha1) took %f seconds' % t)
@@ -891,28 +912,42 @@ class ObserverBasedROMRC(Controller):
         # Stabilize the pair (As+alpha2,Bs)
         t3 = time.time()
         Bs_ext = np.bmat([[Bs, np.zeros((dim_Z0 + dim_X, dim_Z0 + dim_X))]])
+        # print("Bs_ext is")
+        # print(Bs_ext.shape)
+        # print(Bs_ext)
         Ss_ext = np.bmat([[np.zeros((dim_Z0 + dim_X, dim_Y)), np.conj(Qs).T]])
+        # print("Ss_ext is")
+        # print(Ss_ext.shape)
+        # print(Ss_ext)
         R2_ext = scipy.linalg.block_diag(R2, -np.eye(dim_Z0 + dim_X))
+        # print("R2_ext is")
+        # print(R2_ext.shape)
+        # print(R2_ext)
         
         # Following the matlab version use of icare we have E = I and G = 0.
-        qs = np.zeros(((As + alpha2*np.eye(dim_Z0 + dim_X)).shape[0], (As + alpha2*np.eye(dim_Z0 + dim_X)).shape[1]))
-        Xs = scipy.linalg.solve_continuous_are((As + alpha2*np.eye(dim_Z0 + dim_X)), Bs_ext, qs, R2_ext, s=Ss_ext)
+        # qs = np.zeros(((As + alpha2*np.eye(dim_Z0 + dim_X)).shape[0], (As + alpha2*np.eye(dim_Z0 + dim_X)).shape[1]))
+        # Xs = scipy.linalg.solve_continuous_are((As + alpha2*np.eye(dim_Z0 + dim_X)), Bs_ext, qs, R2_ext, s=Ss_ext)
         # K = R^-1(B'XE + S')
         # Es = I
-        Es = np.eye(Xs.shape[1])
-        K_ext  = np.dot(np.linalg.inv(R2_ext), np.dot(np.dot(Bs_ext.T, Xs), Es) + Ss_ext.T)
+        # Es = np.eye(Xs.shape[1])
+        # K_ext  = np.dot(np.linalg.inv(R2_ext), np.dot(np.dot(Bs_ext.T, Xs), Es) + Ss_ext.T)
         # L = EIG(A+G*X*E-B*K,E)
         # G = 0 -> G*X*E = zeros(dim(X,1), dim(E,2))
-        evals = np.linalg.eigvals((As + alpha2*np.eye(dim_Z0 + dim_X)) + np.zeros((Xs.shape[0], Es.shape[1])) - np.dot(Bs_ext, K_ext))
+        # evals = np.linalg.eigvals((As + alpha2*np.eye(dim_Z0 + dim_X)) + np.zeros((Xs.shape[0], Es.shape[1])) - np.dot(Bs_ext, K_ext))
         # [X, K, L] = [~,K_ext,evals] = icare(As+alpha2*eye(dimZ0+dimX),Bs_ext,0,R2_ext,Ss_ext,[],[]);
 
         # Using the control library:
-        # Xs, evals, Gs = control.care((As + alpha2*np.eye(dim_Z0 + dim_X)), Bs_ext, 0, R2_ext, Ss_ext, E=None)
+        qs = np.zeros(((As + alpha2*np.eye(dim_Z0 + dim_X)).shape[0], (As + alpha2*np.eye(dim_Z0 + dim_X)).shape[1]))
+        es = np.eye(qs.shape[0], qs.shape[1])
+        X2, evals, K_ext = control.care(A=(As + alpha2*np.eye(dim_Z0 + dim_X)), B=Bs_ext, Q=qs, R=R2_ext, S=Ss_ext, E=es)
         # Es = np.eye(Xs.shape[1])
         # K_ext  = np.dot(np.linalg.inv(R2_ext), np.dot(np.dot(Bs_ext.T, X), Es) + Ss_ext.T)
         
         # K = -K_ext(1:dimU,:);
         K = -K_ext[0:dim_U, :]
+        # print("This is K")
+        # print(K.shape)
+        # print(K)
         t4 = time.time()
         t = t4 - t3
         print('Stabilization of the pair (As+alpha2,Bs) took %f seconds' % t)
@@ -930,22 +965,11 @@ class ObserverBasedROMRC(Controller):
         # reduction fails (for example due to too high reduction order), the
         # controller design is by default completed without the model reduction.
         if ROMorder is not None:
-            t5 = time.time()
-            # rsys = balred(ss(AN+L*CN,[BN+L*D,L],K2N,zeros(dimU,dimU+dimY)),ROMorder);
-            rsys = control.balred(control.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder)
-            t6 = time.time()
-            t = t6 - t5
-            print('Model reduction step took %f seconds' % t)
-                
-            ALr = rsys.A
-            Br_full = rsys.B
-            BLr = Br_full[:, 0:dim_U]
-            Lr = Br_full[:, dim_U:]
-            K2r = rsys.C
             try:
                 t5 = time.time()
                 # rsys = balred(ss(AN+L*CN,[BN+L*D,L],K2N,zeros(dimU,dimU+dimY)),ROMorder);
-                rsys = control.balred(control.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder)
+                rsys = control.balred(control.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder, method='matchdc')
+                # print(rsys)
                 t6 = time.time()
                 t = t6 - t5
                 print('Model reduction step took %f seconds' % t)
