@@ -7,7 +7,6 @@ setup(name='rorpack',
       install_requires=['numpy',
                         'scipy>=1.0.0',
                         'matplotlib',
-                        'slycot',
                         'control'],
       extras_require={
          'docs': ['sphinx'],

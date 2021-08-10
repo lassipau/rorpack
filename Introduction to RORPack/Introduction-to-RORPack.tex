@@ -534,7 +534,7 @@ The controllers are the following:
       Calling sequence for the construction:\\[-1ex]
      \begin{quotation}
        \texttt{ObserverBasedRC(sys,freqsReal,K21,L,\\ 
-	 \phantom{a}\hspace{2.7cm} IMstabmargin,IMstabmethod,CKRKvals)}
+	 \phantom{a}\hspace{2.7cm} IMstabmargin,IMstabmethod)}
      \end{quotation}
      \medskip
      where \texttt{sys} contains the parameters of the plant, \texttt{freqsReal} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}.
@@ -573,7 +573,7 @@ Note that the use of this controller requires the Python Control Systems Library
       Calling sequence for the construction:\\[-1ex]
      \begin{quotation}
        \texttt{DualObserverBasedRC(sys,freqsReal,K2,L1,\\
-	 \phantom{a}\hspace{2.7cm} IMstabmargin,IMstabmethod,RLBLvals)}
+	 \phantom{a}\hspace{2.7cm} IMstabmargin,IMstabmethod)}
      \end{quotation}
      \medskip
      where \texttt{sys} contains the parameters of the plant, \texttt{freqs} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}. The parameters \texttt{K2} and \texttt{L1} describe operators $K_2$ and $L_1$, respectively, such that $A+BK_2^\Lambda$ and $A+L_1\CL$ generate exponentially stable semigroups. 

@@ -34,16 +34,16 @@ def construct_heat_1d_3(N, cfun, IB1, IB2, IC1, IC2, printcfun=True):
     DiffOp, spgrid = diffusion_op_1d(spgrid, cfun, 'ND')
     A = DiffOp.todense()
 
-    B1 = 1/(IB1[1] - IB1[0])*np.logical_and(spgrid >= IB1[0], 
-            spgrid <= IB1[1])
-    # Floating point rounding errors avoided with np.isclose()    
+    # Floating point rounding errors avoided with np.isclose()
+    B1 = 1/(IB1[1] - IB1[0])*np.logical_and(np.logical_or(spgrid >= IB1[0],
+            np.isclose(spgrid - IB1[0], 0)), np.logical_or(spgrid <= IB1[1], np.isclose(spgrid - IB1[1], 0)))
     B2 = 1/(IB2[1] - IB2[0])*np.logical_and(np.logical_or(spgrid >= IB2[0],
             np.isclose(spgrid - IB2[0], 0)), np.logical_or(spgrid <= IB2[1], np.isclose(spgrid - IB2[1], 0)))
     B = np.stack((B1, B2), axis=1)
-    C1 = h/(IC1[1] - IC1[0])*np.logical_and(spgrid >= IC1[0],
-            spgrid <= IC1[1])
-    C2 = h/(IC2[1] - IC2[0])*np.logical_and(spgrid >= IC2[0],
-            spgrid <= IC2[1])
+    C1 = h/(IC1[1] - IC1[0])*np.logical_and(np.logical_or(spgrid >= IC1[0],
+            np.isclose(spgrid - IC1[0], 0)), np.logical_or(spgrid <= IC1[1], np.isclose(spgrid - IC1[1], 0)))
+    C2 = h/(IC2[1] - IC2[0])*np.logical_and(np.logical_or(spgrid >= IC2[0],
+            np.isclose(spgrid - IC2[0], 0)), np.logical_or(spgrid <= IC2[1], np.isclose(spgrid - IC2[1], 0)))
     C = np.stack((C1, C2))
     D = np.zeros((2, 2))
     Bd = np.bmat([[np.atleast_2d((2*cfun(0))/h)], [np.zeros((N-1, 1))]])

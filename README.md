@@ -4,7 +4,7 @@ The Robust Output Regulation Package is an open-source Python library for contro
 
 ## Requirements
 
-The package works on Python 2 and Python 3, and it requires NumPy, MatPlotLib, and SciPy version greater than or equal to 1.0.0. Sphinx is an optional dependency which is used for generating the library documentation.
+The package works on Python 2 and Python 3, and it requires NumPy, MatPlotLib, and SciPy version greater than or equal to 1.0.0. Sphinx is an optional dependency which is used for generating the library documentation. The observer-based reduced order model controller implemented in the controller.py file requires The Python Control Systems Library, which in turn requires the slycot Python wrapper. Installation of slycot can be cumbersome with more information at https://pypi.org/project/slycot/, however, it is only required for one controller.
 
 ## Installation 
 
