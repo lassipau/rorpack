@@ -1,5 +1,22 @@
 \begin{thebibliography}{10}
 
+\bibitem{AulGil15book}
+Eugenio Aulisa and David Gilliam.
+\newblock {\em A Practical Guide to Geometric Regulation for Distributed
+  Parameter Systems}.
+\newblock Chapman and Hall, 2015.
+
+\bibitem{AulGil21arxiv}
+Eugenio {Aulisa} and David~S. {Gilliam}.
+\newblock {Approximation Methods for Geometric Regulation}.
+\newblock {\em arXiv e-prints}, page arXiv:2102.06196, February 2021.
+
+\bibitem{AulGil19}
+Eugenio Aulisa, David~S. Gilliam, and Thanuka~W. Pathiranage.
+\newblock Analysis of the error in an iterative algorithm for asymptotic
+  regulation of linear distributed parameter control systems.
+\newblock {\em ESAIM Math. Model. Numer. Anal.}, 53(5):1577--1606, 2019.
+
 \bibitem{BorTom10}
 Alexander Borichev and Yuri Tomilov.
 \newblock Optimal polynomial decay of functions and operator semigroups.
@@ -94,6 +111,19 @@ Jie Huang.
 \newblock {\em Nonlinear Output Regulation, Theory and Applications}.
 \newblock SIAM, Philadelphia, 2004.
 
+\bibitem{HuhPauMTNS20}
+Konsta Huhtala, Lassi Paunonen, and Weiwei Hu.
+\newblock Robust output tracking for a room temperature model with distributed
+  control and observation.
+\newblock In {\em Proceedings of the 24th International Symposium on
+  Mathematical Theory of Networks and Systems}, Cambridge, UK, August 24--28
+  2020.
+
+\bibitem{HumKur19}
+J.~{Humaloja}, M.~{Kurula}, and L.~{Paunonen}.
+\newblock Approximate robust output regulation of boundary control systems.
+\newblock {\em IEEE Trans. Automat. Control}, 64(6):2210--2223, June 2019.
+
 \bibitem{HumPau18}
 Jukka-Pekka Humaloja and Lassi Paunonen.
 \newblock Robust regulation of infinite-dimensional port-{H}amiltonian systems.
@@ -145,11 +175,11 @@ V.~Natarajan, D.S. Gilliam, and G.~Weiss.
 \newblock The state feedback regulator problem for regular linear systems.
 \newblock {\em IEEE Trans. Automat. Control}, 59(10):2708--2723, 2014.
 
-\bibitem{PauPha18arxiv}
-L.~{Paunonen}, D.~{Phan}, and P.~{Laakkonen}.
-\newblock {Reduced Order Controller Design for Robust Output Regulation of
-  Parabolic Systems}.
-\newblock {\em ArXiv e-prints}, November 2018.
+\bibitem{PauPha20}
+L.~{Paunonen} and D.~{Phan}.
+\newblock Reduced order controller design for robust output regulation of
+  parabolic systems.
+\newblock {\em IEEE Trans. Automat. Control}, 65(6):2480--2493, 2020.
 
 \bibitem{Pau11phd}
 Lassi Paunonen.
@@ -174,18 +204,31 @@ Lassi Paunonen.
 \newblock {Stability and Robust Regulation of Passive Linear Systems}.
 \newblock {\em ArXiv e-prints (https://arxiv.org/abs/1706.03224)}, June 2017.
 
+\bibitem{Pau19}
+Lassi Paunonen.
+\newblock Stability and robust regulation of passive linear systems.
+\newblock {\em SIAM J. Control Optim.}, 57(6):3827--3856, 2019.
+
 \bibitem{PauLeGLHMNC18}
 Lassi Paunonen, Yann~Le Gorrec, and H\'{e}ctor Ram{\'{\i}}rez.
 \newblock A simple robust controller for port--{H}amiltonian systems.
 \newblock In {\em Proceedings of the 6th IFAC Workshop on Lagrangian and
   Hamiltonian Methods for Nonlinear Control}, pages 92--96, Valparaiso, Chile,
   May 1--4 2018.
-  
+
 \bibitem{PauLeG22}
 Lassi {Paunonen}, Yann {Le Gorrec}, and H{\'e}ctor {Ram{\'\i}rez}.
 \newblock A lyapunov approach to robust regulation of distributed
   port-hamiltonian systems.
 \newblock {\em IEEE Trans. Automat. Control}, published online.
+
+\bibitem{PauPhaMTNS20}
+Lassi Paunonen and Duy Phan.
+\newblock A reduced order controller for output tracking of a {K}elvin--{V}oigt
+  beam.
+\newblock In {\em Proceedings of the 24th International Symposium on
+  Mathematical Theory of Networks and Systems}, Cambridge, UK, August 24--28
+  2020, submitted.
 
 \bibitem{PauPoh10}
 Lassi Paunonen and Seppo Pohjolainen.
@@ -202,6 +245,12 @@ Lassi Paunonen and Seppo Pohjolainen.
 \newblock The internal model principle for systems with unbounded control and
   observation.
 \newblock {\em SIAM J. Control Optim.}, 52(6):3967--4000, 2014.
+
+\bibitem{PhaPau21}
+Duy {Phan} and Lassi {Paunonen}.
+\newblock Finite-dimensional controllers for robust regulation of boundary
+  control systems.
+\newblock {\em Math. Control Relat. Fields}, 11(1):95--117, 2021.
 
 \bibitem{Poh81a}
 Seppo Pohjolainen.
@@ -252,17 +301,5 @@ Xiaodong Xu and Stevan Dubljevic.
 \newblock Output and error feedback regulator designs for linear
   infinite-dimensional systems.
 \newblock {\em Automatica J. IFAC}, 83:170--178, 2017.
-
-\bibitem{PauPha20}
-L.~{Paunonen} and D.~{Phan}.
-\newblock Reduced order controller design for robust output regulation of
-  parabolic systems.
-\newblock {\em IEEE Trans. Automat. Control}, 65(6):2480--2493, 2020.
-
-\bibitem{PhaPau21}
-Duy {Phan} and Lassi {Paunonen}.
-\newblock Finite-dimensional controllers for robust regulation of boundary
-  control systems.
-\newblock {\em Math. Control Relat. Fields}, 11(1):95--117, 2021.
 
 \end{thebibliography}
