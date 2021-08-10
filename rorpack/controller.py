@@ -689,6 +689,8 @@ class PassiveRC(Controller):
         '''
         if Dc is None:
             Dc = np.zeros((sys.B.shape[1],sys.C.shape[0]))
+        if np.ndim(Dc) == 0:
+            Dc = Dc*np.eye(dim_Y)
         stab_sys = sys.output_feedback(Dc)
         if not is_stable(stab_sys.A):
             raise Exception('System is not stable, cannot construct the controller')
