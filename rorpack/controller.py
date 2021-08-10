@@ -176,7 +176,7 @@ def IMstabilization_dissipative(freqs, Pvals):
     return K
 
 
-def IMstabilization_general(freqs, Pvals, cG1, B1, IMstabmargin, IMstabmethod):
+def IMstabilization_general(freqs, dim_Y, dim_U, cG1, B1, IMstabmargin, IMstabmethod):
     '''
     Stabilization of the internal model pair (cG1,B1) using either LQR or pole placement.
 
@@ -184,8 +184,8 @@ def IMstabilization_general(freqs, Pvals, cG1, B1, IMstabmargin, IMstabmethod):
     ----------
     freqs : (, N) array_like
         The (real) frequencies (w_k)_{k=0}^q of the reference and disturbance signals.
-    Pvals : (N, M, P) array_like
-        Values of the transfer function at the complex frequencies (i*w_k)_{k=0}^q.
+    dim_Y, dim_U : integer
+        Dimensions of the output space and input space, respectively.
     cG1 : (N1, M1) array_like
         The internal model for the frequencies 'freqs' and dim_Y
     B1 : (N2, M2) array_like
@@ -205,7 +205,6 @@ def IMstabilization_general(freqs, Pvals, cG1, B1, IMstabmargin, IMstabmethod):
     IMstabmethodexception : Exception 
        Thrown in case the internal model stabilization method is not 'LQR' or 'poleplacement'.
     '''
-    dim_Y, dim_U = Pvals[0].shape
 
     if IMstabmethod == 'LQR':
         q = np.size(freqs)
@@ -485,7 +484,7 @@ class ObserverBasedRC(Controller):
         H = sp.linalg.solve_sylvester(cG1, -sys.A - np.dot(sys.B, K21), np.dot(cG2, sys.C + np.dot(sys.D, K21)))
         B1 = np.dot(H, sys.B) + np.dot(cG2, sys.D)
 
-        K1 = IMstabilization_general(freqsReal, np.atleast_2d(dim_Y, dim_U), cG1, B1, IMstabmargin, IMstabmethod)
+        K1 = IMstabilization_general(freqsReal, dim_Y, dim_U, cG1, B1, IMstabmargin, IMstabmethod)
 
         K2 = K21 + np.dot(K1, H)
         G11 = np.dot(sys.B + np.dot(L, sys.D), K1)
@@ -642,7 +641,7 @@ class DualObserverBasedRC(Controller):
         H = sp.linalg.solve_sylvester(-sys.A - np.dot(L1, sys.C), cG1, np.dot(sys.B + np.dot(L1, sys.D), cK))
         C1 = np.dot(sys.C, H) + np.dot(sys.D, cK)
 
-        cG2 = IMstabilization_general(freqsReal, np.atleast_2d(dim_Y, dim_U), cG1.conj().T, C1.conj().T, IMstabmargin, IMstabmethod).conj().T
+        cG2 = IMstabilization_general(freqsReal, dim_Y, dim_U, cG1.conj().T, C1.conj().T, IMstabmargin, IMstabmethod).conj().T
         L = L1 + np.dot(H, cG2)
         G11 = np.dot(cG2, sys.C + np.dot(sys.D, K2))
         G12 = sys.A + np.dot(sys.B, K2) + np.dot(L, sys.C + np.dot(sys.D, K2))
@@ -776,7 +775,10 @@ class ObserverBasedROMRC(Controller):
         alpha1, alpha2 : integer
             Design parameters to determine the closed-loop stability margin. Required to be positive.
         R1, R2, Q0, Q1, Q2 : integer/(N1, M1) array_like
-            TODO
+            All these matrices should be chosen to be invertible and positive definite.
+            (the dimension Q_0 can be computed with the routine IMdim(freqsReal,p)).
+            Q1 and Q2 correspond to  the Galerkin approximations (compatible with sysApprox).
+            They can be chosen to correspond to the Galerkin approximations of Q_1=q_1*I and Q_2=q_2*I for some q_1,q_2>0.
         ROMorder
             order of the reduced-order observer in the controller.
             The model reduction step can be skipped by setting 'ROMorder=None'
@@ -904,7 +906,7 @@ class ObserverBasedROMRC(Controller):
         if ROMorder is not None:
             try:
                 t5 = time.time()
-                rsys = ctrl.balred(ctrl.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder, method='matchdc')
+                rsys = ctrl.balred(ctrl.ss(AN + np.dot(L, CN), np.bmat([[BN + np.dot(L, D), L]]), K2N, np.zeros((dim_U, dim_U + dim_Y))), ROMorder, method='truncate')
                 t6 = time.time()
                 t = t6 - t5
                 print('Model reduction step took %f seconds' % t)

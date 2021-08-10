@@ -565,7 +565,7 @@ can be chosen to correspond to the Galerkin approximations of $Q_1=q_1 I$ and $Q
 
 The model reduction dimension parameter \texttt{ROMorder} corresponds to $r$ in~\citel{PauPha20}{Sec.~III.A} and it determines the final reduced order dimension of the observer part of the controller. The model reduction step can be skipped completely by setting \texttt{ROMorder=NaN}. The size of the parameter should be determined to be sufficiently high so that the closed-loop system is exponentially stable. The result~\citel{PauPha20}{Thm.~III.1} guarantees that closed-loop stability for the original PDE plant and the reduced order controller is achieved if both the Galerkin approximation order $N$ and the model reduction parameter $r\geq N$ are sufficiently high, but (at the moment) there are no concrete lower bounds for these values. Typically, if the decay of the Hankel singular values of $(A^N,B^N,C^N)$ are sufficiently fast, it is possible to achive the closed-loop stability with a fairly small model reduction parameter $r$.
 
-Note that the use of this controller requires the Python Control Systems Library, which in turn requires the Python slycot library. Installation of the slycot library can be cumbersome especially on the Microsoft Windows operating system. A conda environment is recommended for this with further instructions on installing the package provided on the slycot project web page.
+Note that the use of this controller requires the Python Control Systems Library, which in turn requires the Python slycot library. Installation of the slycot library can be cumbersome especially on the Microsoft Windows operating system. A conda environment is recommended for this with further instructions on installing the package provided on the slycot project web page \href{https://pypi.org/project/slycot/}{https://pypi.org/project/slycot/}.
 
 	\bigskip
 
@@ -709,7 +709,7 @@ The model on $\Omega = [0,1]$ is
   c_1(\xi)&=10\chi_{[.1,.2]}(\xi), \quad c_2(\xi)=10\chi_{[.8,.9]}(\xi) .
 }
     Here $\chi_{[a,b]}(\cdot)$ is the characteristic function on the interval $[a,b]\subset [0,1]$, and thus the control inputs act on the intervals $[0.3,0.4]$ and $[0.6,0.7]$, and the outputs measure the average temperatures on the intervals $[0.1,0.2]$ and $[0.8,0.9]$.
-The uncontrolled system is stable because of the homogeneous Dirichlet boundary condition at $\xi = 1$. 
+The uncontrolled system is stable because of the homogeneous Dirichlet boundary condition at $\xi = 1$. The default controller used in this example is the Reduced Order Observer Based Robust Controller in \texttt{ObserverBasedROMRC}. Note that this particular controller may not work properly (for further explanation see the section~\ref{sec:ControllerTypes}). However, the commented out low-gain, observer based and dual observer based robust controllers function properly.
 
 Figure~\ref{fig:1Dheat3} shows example results of the simulations including plots of the outputs and reference signals, norm of the regulation error, computed control signals, and the state of the controlled system as a function of $\xi$ and $t$.
 
@@ -1051,6 +1051,7 @@ Figure~\ref{fig:BeamTim1} shows the outputs of the simulation example.
   \item \href{https://sysgrouptampere.wordpress.com}{https://sysgrouptampere.wordpress.com} --- Systems Theory Research Group at Tampere University.
   \item \href{http://mathesaurus.sourceforge.net/matlab-numpy.html}{http://mathesaurus.sourceforge.net/matlab-numpy.html} --- Useful information on differences in the Matlab and Python/Numpy syntax for vectors and matrices.
   \item \href{https://chebfun.org}{https://chebfun.org} --- Homepage of the Chebfun Project.
+  \item \href{https://github.com/python-control/python-control}{https://github.com/python-control/python-control} --- The Python Control Systems Library
 \end{itemize}
 
 \shorten{
