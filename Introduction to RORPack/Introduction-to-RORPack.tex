@@ -164,64 +164,88 @@ showstringspaces=false            %
 
 \vspace{3ex}
 
+\begin{abstract}
+  This document contains the mathematical introduction to RORPack --- a software package for robust output tracking and disturbance rejection for linear PDE systems. The RORPack library is open-source and freely available at 
+https://github.com/lassipau/rorpack/ and
+https://github.com/lassipau/rorpack-matlab/
+The package contains functionality for automated construction of robust internal model based controllers, simulation of the controlled systems, visualisation of the results, as well as a collection of example cases on robust output regulation of controlled heat and wave equations on 1D and 2D spatial domains.
+\end{abstract}
+
 {\small\tableofcontents}
+
+
+\section*{Download links}
+
+
+Both the Python and Matlab versions of \RORname\ software are distributed as open source under the GNU General Public License version 3 (see \texttt{LICENSE.txt} for detailed license and copyright information) and can freely downloaded at the addresses
+\begin{flushleft}
+ \hspace{1.6cm} \href{https://github.com/lassipau/rorpack/}{https://github.com/lassipau/rorpack/} \hspace{1.4cm} (Python version)\\
+ \hspace{1.6cm}  \href{https://github.com/lassipau/rorpack-matlab/}{https://github.com/lassipau/rorpack-matlab/} \hspace{.1cm} (Matlab version)
+\end{flushleft}
+%\shorten{
+The project version information can be found in the \texttt{CHANGELOG.md} files, and installation instructions are included in the \texttt{README.md} files.
 
 \section{General Description}
 %\label{sec:intro}
 
-\RORname\ is a Python library
-for controller design and simulation of robust output tracking and disturbance rejection for linear partial differential equation models. 
+\RORname\ is a software package
+for controller design and simulation of robust output tracking and disturbance rejection for linear partial differential equation (PDE) models. 
+The package is available as a Python library and a Matlab package.
 %Its main purpose is to give an  
-The package contains a number of complete examples on robust controller design and simulation of PDE models
+The software contains a number of complete examples on robust controller design and simulation of PDE models
 %. The types of models (at the moment) include
 of the following types:
 \begin{itemize}
-  \item one-dimensional diffusion equations with either boundary or distributed control and observation.
-  \item two-dimensional heat equation on a rectangular domain.
-  \item one-dimensional wave equations with either distributed or boundary control and observation.
-    \COMMapproxRC{
-    \item two-dimensional wave equation on an annulus with boundary control and observation
-    }
+  \item one-dimensional (1D) and two-dimensional (2D) diffusion equations with control and observation either at the boundary or inside the spatial domain.
+%  \item two-dimensional heat equation on a rectangular domain.
+  \item 1D wave equations with either boundary or in-domain control and observation.
+    \item A 2D wave equation on an annulus with boundary control and observation
+\item 1D beam equations with boundary or in-domain control and observation.
 \end{itemize}
 New examples will also be added in the future versions of the package.
 %This collection of examples will also be expanded in the future.
 %and a collection of examples on robust output tracking and disturbance rejection for distributed parameter systems.
 
-The purpose of this document is to give a general introduction to the background theory of robust output regulation for linear PDE systems, to describe the mathematical models that are included as the example cases, and to document the usage of the software package on a general level.
+The purpose of this document is to give a general introduction to the background theory of robust output regulation for linear PDE systems (Section~\ref{sec:RORPintro}), 
+ to document the usage of the software package on a general level (Sections~\ref{sec:Usage} and Section~\ref{sec:ControllerTypes}), and 
+to describe the mathematical models that are included as the example cases (Section~\ref{sec:PDEcases}).
  
 The purpose of \RORname\ is to serve as a tool to \textit{illustrate} the theory of robust output regulation for distributed parameter systems and it should not (yet) be considered as a serious controller design software. 
 The developers of the software do not take any responsibility and are not liable for any damage caused through use of this software.
 In addition, at its present stage, the library is not optimized in terms of numerical accuracy. Any helpful comments on potential improvements of the numerical aspects will be greatly appreciated!
 
-The \RORname\ software is distributed as open source under the GNU General Public License version 3 (see \texttt{LICENSE.txt} for detailed license and copyright information) and can freely downloaded at the address
+  This documentation is also published in \href{https://arxiv.org/}{arXiv.org}.
+%}
+The website of the project is located at the address (hosted by GitHub Pages)
 \begin{center}
-  \href{https://github.com/lassipau/rorpack/}{https://github.com/lassipau/rorpack/}
+  \href{https://lassipau.github.io/rorpack/}{https://lassipau.github.io/rorpack/}
 \end{center}
-\shorten{
-  This document is published in Arxiv (\href{http://arxiv.org/}{http://arxiv.org/}).
-}
 All comments and suggestions for improvements are welcome! These can be sent directly to \texttt{\href{mailto:lassi.paunonen@tuni.fi}{lassi.paunonen@tuni.fi}}.
 
-\subsection{Controller design and simulation workflow}
+\subsection{Controller Design and Simulation Workflow}
 
-Basic workflow for robust controller design and simulation for a given system is that the user creates a main file with the following parts:
+Basic workflow for robust controller design and simulation for a given system is that the user creates a ``main simulation file'' with the following parts:
 \begin{enumerate}
 %  \item Create a main file for the simulation. 
 %    The file includes the following parts in the given order.
-  \item Calling of user-defined Python routines that return a numerical approximation of the linear PDE model.
+  \item Calling of a user-defined Matlab function that returns a numerical approximation of the linear PDE model. In the provided examples this function is in a separate file with the prefix ``Constr''.
   \item Defining the reference and disturbance signals to be considered.
-  \item Calling of a \RORname\ routine for construction of a robust controller that is suitable for the type of PDE model.
-    This typically involves choosing appropriate parameters for the controller construction.
+  \item Calling of a \RORname\ routine for construction of a ``robust controller'' that is suitable for the type of the PDE model.
+    This also involves defining the parameters of the controller construction.
   \item Calling of \RORname\ routines for construction and simulation of the closed-loop system. The routines return numerical data describing the output, the error, the control signal, and the closed-loop state.
   \item Calling of \RORname\ routines for visualising the behaviour of the output and the output error, as well as 
     user-defined routines for illustrating the behaviour of the state of the controlled PDE system (multidimensional plots or animations).
 \end{enumerate}
-The example cases included in \RORname\ are built around main files that follow the same structure, and the users are encouraged to implement their own simulations by modifying the example codes.
+The example cases included in \RORname\ are built around main files that follow the above structure, and the users are encouraged to implement their own simulations by modifying the example codes.
 
-It is also possible to combine other Python numerical software packages in the study of robust controller design for PDE models in order to employ ready-made numerical approximations or additional numerical methods in the computation of required controller parameters. This approach is illustrated in one of the PDE example cases ``\texttt{heat\_1d\_2}'' described in Section~\ref{sec:Heat1D2} (Case~2). 
-In this example the transfer function of the controlled PDE and other parameters used in the controller construction are computed with the \textbf{Chebfun package}~\cite{DriHal14book,Tre13book} (\href{https://chebfun.org/}{https://chebfun.org/}) which provides flexible tools for solution of differential equations with extreme accuracy using spectral methods. 
+It is also possible to combine other Python software packages and Matlab toolboxes in the study of robust controller design for PDE models in order to employ ready-made numerical approximations or additional numerical methods in the computation of required controller parameters.
+ This approach is illustrated the PDE example case ``\texttt{heat\_1d\_2.py}''
+which utilise the \textbf{Chebfun package}~\cite{DriHal14book} (\href{https://chebfun.org/}{https://chebfun.org/}). 
+  which provides flexible tools for numerical approximation with Chebyshev polynomials and solution of differential equations with extreme accuracy using spectral methods.
+In this particular PDE example the \textbf{Chebfun} package is used to compute high-accuracy approximations of the \emph{transfer function} of the controlled PDE system.
 
 \section{Introduction to Robust Output Regulation}
+\label{sec:RORPintro}
 
 In this section we give a general introduction to the mathematical theory of \keyterm{robust output regulation}.
 The purpose of the \RORname\ package is to illustrate controller design for linear distributed parameter systems of the form
@@ -235,9 +259,13 @@ The purpose of the \RORname\ package is to illustrate controller design for line
 on a Banach or a Hilbert space $X$.
 Controlled linear PDE models describing diffusion-convection phenomena, waves and vibrations and elastic deformations can be written in this form with a suitable differential operator~$A$~\cite{CurZwa95book,TucWei09book,JacZwa12book}. 
 %generating a \keyterm{strongly continuous semigroup} on $X$.
-In our main control problem the goal is to design a dynamic error feedback controller in such a way that the output $y(t)$ of the system converges to a given reference signal $\yref(t)$ despite the external disturbance signal $\wdist(t)$. In addition, the controller needs to be \keyterm{robust} in the sense that it achieves the output tracking and disturbance rejection even if the parameters $(A,B,B_d,C,D,D_d)$ are perturbed or contain small uncertainties.
+In our main control problem the goal is to design a dynamic error feedback controller in such a way that
+\begin{quotation}
+ ``the output $y(t)$ of the system converges to a given reference signal $\yref(t)$ despite the external disturbance signal $\wdist(t)$''. 
+\end{quotation}
+In addition, the controller needs to be \keyterm{robust} in the sense that it achieves the output tracking and disturbance rejection even if the parameters $(A,B,B_d,C,$ $D,D_d)$ are perturbed or contain small uncertainties.
 
-Our main emphasis is on robust output regulation of linear partial differential equations, especially \keyterm{diffusion-convection equations}, \keyterm{wave equations}, and \keyterm{beam and plate equations}. However, the \RORname\ package can also be used for construction of controllers for  finite-dimensional systems with given matrices $(A,B,B_d,C,D,D_d)$. 
+Our main emphasis is on robust output regulation of \keyterm{diffusion-convection equations}, \keyterm{wave equations}, and \keyterm{beam and plate equations}. However, the \RORname\ package can also be used for construction of controllers for  finite-dimensional systems with given matrices $(A,B,B_d,C,D,D_d)$. 
 
 The full robust output regulation problem is defined in the following way. 
 
@@ -266,8 +294,9 @@ The reference signal $\yref(t)$ and the  disturbance signals $\wdist(t)$ are ass
 for some \textbf{known frequencies} $\set{\gw_k}_{k=0}^q\subset \R$ with $0=\gw_0<\gw_1<\ldots<\gw_q$ and unknown amplitudes $\set{a_k^j}_{k,j},\set{b_k^j}_{k,j}\subset \R$ (some of which may zero). 
 
 Dynamic feedback is essential for achieving robust output regulation, and the control problem can indeed be solved with a dynamic error feedback controller (see Figure~\ref{fig:FBcontrol}). The classical \keyterm{internal model principle} gives a characterization for the controllers that solve the robust output regulation problem. This fundamental result was first introduced for finite-dimensional linear systems in the 1970's by Francis and Wonham~\cite{FraWon75a} and Davison~\cite{Dav76} (see~\citel{Hua04book}{Ch. 1} for an excellent overview).
-The internal model principle was later extended for infinite-dimensional linear systems in by the Systems Theory Research Group at Tampere, Finland in the references~\cite{Imm06phd,PauPoh10,Pau11phd,PauPoh14a,Pau16a}\footnote{Our focus is on linear systems, but there is also an extensive literature on the internal model principle for nonlinear systems, see, e.g.,~\cite{Hua04book,ByrIsi03,ByrIsi04} and references therein.}.
+The internal model principle was later extended for infinite-dimensional linear systems by the Systems Theory Research Group at Tampere, Finland in the references~\cite{Imm06phd,PauPoh10,Pau11phd,PauPoh14a,Pau16a}\footnote{Our focus is on linear systems, but there is also an extensive literature on the internal model principle for nonlinear systems, see, e.g.,~\cite{Hua04book,ByrIsi03,ByrIsi04} and references therein.}.
 
+\vspace{-.3cm}
 
 \begin{figure}[h!]
   \begin{center}
@@ -287,28 +316,30 @@ The internal model principle was later extended for infinite-dimensional linear 
   \end{center}
 \end{figure}
 
+\vspace{-.3cm}
+
 The internal model principle~\cite[Thm. 6.9]{PauPoh10} is also the most important tool in designing controllers for robust output regulation. The result states that a controller solves the robust output regulation problem if and only if the following conditions are satisfied.
 \begin{itemize}
   \item The error feedback controller incorporates ``an internal model'' of
     the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}.
   \item The closed-loop system is exponentially or strongly stable.
 \end{itemize}
-In controller design, the the internal model property can be guaranteed by choosing a suitable \keyterm{structure} for the controller. The rest of parameters are subsequently chosen in order to stabilize the closed-loop system.
+In controller design, the internal model property can be guaranteed by choosing a suitable \keyterm{structure} for the controller. The rest of parameters are subsequently chosen so that the closed-loop system becomes stable.
 
 
 
-The detailed description of the theory of robust output regulation problem and the internal model principle  can be found in the references listed below references. The main emphasis in the list is (shamelessly) on the publications by the Systems Theory Research Group at Tampere University, Finland.
+The detailed description of the theory of robust output regulation problem and the internal model principle  can be found in the references listed below. The main emphasis in the list is (shamelessly) on the publications by the Systems Theory Research Group at Tampere University, Finland.  All preprints are available at \href{https://sysgrouptampere.wordpress.com/publications/}{https://sysgrouptampere.wordpress.com/publications/}
 \begin{itemize}
-  \item \cite{Poh82,XuJer95,HamPoh96a,LogTow97,HamPoh00,RebWei03,LogTow03,ImmPoh06b,Imm07a,DosBas08,BouIdr09,HamPoh10,HamPoh11,PauPoh13a,XuSal14} (including PI-control for PDE models): Robust controller design in various forms for infinite-di\-men\-sional linear systems.
+  \item \cite{Poh82,XuJer95,HamPoh96a,LogTow97,HamPoh00,RebWei03,LogTow03,ImmPoh06b,Imm07a,DosBas08,BouIdr09,HamPoh10,HamPoh11,PauPoh13a,XuSal14}: Robust controller design in various forms for infinite-di\-men\-sional linear systems (including PI-control for PDE models).
   \item \cite{PauPoh10} and~\cite{PauPoh14a}: The Internal Model Principle for infinite-dimensional linear systems with bounded and unbounded, respectively, input and output operators $B$ and $C$.
   \item \cite{Pau16a,Pau17b}: Robust controller design for \keyterm{regular linear systems}.
-  \item \cite{HumPau18,HumKur18}: Robust controller design for \keyterm{port-Hamiltonian systems} and other boundary controlled partial differential equations.
-  \item \cite{RebWei03,Pau17carxiv,PauLeGLHMNC18}: Robust controller design \keyterm{impedance passive systems}.
-  \item \cite{PauPha18arxiv} for robust finite-dimensional low-order controller design for parabolic systems using Galerkin approximations and model reduction.
-  \item References on the output regulation \keyterm{without} the robustness requirement:~\cite{Poh81a,Sch83b,ByrLau00,Deu11,NatGil14,XuDub17a}
+  \item \cite{HumPau18,HumKur19,PauLeG22}: Robust controller design for \keyterm{port-Hamiltonian systems} and other boundary controlled partial differential equations.
+  \item \cite{RebWei03,Pau19,PauLeGLHMNC18,PauLeG22}: Robust controller design \keyterm{impedance passive systems}.
+  \item \cite{PauPha20,PhaPau21,HuhPauMTNS20,PauPhaMTNS20}: Robust finite-dimensional low-order controller design for parabolic systems using Galerkin approximations and model reduction.
+  \item \cite{Poh81a,Sch83b,ByrLau00,Deu11,NatGil14,AulGil15book,XuDub17a,AulGil19,AulGil21arxiv}: References on the output regulation \keyterm{without} the robustness requirement.
 \end{itemize}
 
-The constructed controllers are of the form
+The considered \keyterm{dynamic error feedback controllers} are of the form
 \begin{subequations}
   \label{eq:controller}
   \eqn{
@@ -317,12 +348,173 @@ The constructed controllers are of the form
   }
 \end{subequations}
 Here $y(t)-\yref(t)$ is the \keyterm{regulation error}.
-The construction of the robust controllers are based on the references~\cite{Pau16a,Pau17carxiv} with certain modifications and improvements. In particular, the internal models are defined in their ``real forms'', making the controller real whenever the parameters of the plant are real. The same controllers also achieve robust output tracking also for reference and disturbance signals with complex coefficients $\set{a_k^j}_{k,j},\set{b_k^j}_{k,j}\subset \C$.
+The constructions of the robust controllers in \RORname\ are based on the references~\cite{RebWei03,Pau16a,Pau19,PauPha20} with certain modifications and improvements (see Section~\ref{sec:ControllerTypes}). In particular, the internal models are defined in their ``real forms'', making the controller real whenever the parameters of the plant~\eqref{eq:plantintro} are real. The same controllers also achieve robust output tracking also for reference and disturbance signals with complex amplitudes
+ $\set{a_k^j}_{k,j},\set{b_k^j}_{k,j}\subset \C$.
 
-The constructions of the robust controllers use the knowledge of the frequencies $\set{\gw_k}_k $ of the reference and disturbance signals, the number of outputs $p:=\dim Y$ of the system~\eqref{eq:plantintro}, and certain knowledge of the system. In particular, the ``minimal controllers'' require knowledge of the values $P(i\gw_k)$ of the transfer function $P(\gl)=\CL R(\gl,A)B+D$ of the system at the complex frequencies $\set{i\gw_k}_k\subset i\R$ of the reference and disturbance signals~\eqref{eq:yrefwdist}.
-The other controller structures also use knowledge of the parameters $(A,B,C,D)$ of the system as they involve designing an observer for~\eqref{eq:plantintro}, and require stabilizing feedback and output injection operators. See Section~\ref{sec:ControllerTypes} for more information on the controller-specific requirements.
+The constructions of the robust controllers use the knowledge of the frequencies $\set{\gw_k}_k $ of the reference and disturbance signals, the number of outputs $p:=\dim Y$ of the system~\eqref{eq:plantintro}, and certain knowledge of the system. In particular, the ``Low-Gain Controller'' requires knowledge of the values $P(i\gw_k)$ of the transfer function $P(\gl)=\CL R(\gl,A)B+D$ of the system~\eqref{eq:plantintro} at the complex frequencies $\set{i\gw_k}_k\subset i\R$ of the reference and disturbance signals~\eqref{eq:yrefwdist}.
+The other controller structures also use knowledge of the parameters $(A,B,C,D)$ of the system as they involve designing an observer for~\eqref{eq:plantintro}, and require the user to provide stabilizing state feedback and output injection operators. See Section~\ref{sec:ControllerTypes} for the controller-specific requirements.
 
-\section{Using the Software}
+
+%{\small\tableofcontents}
+%
+%\section{General Description}
+%%\label{sec:intro}
+%
+%\RORname\ is a Python library
+%for controller design and simulation of robust output tracking and disturbance rejection for linear partial differential equation models. 
+%%Its main purpose is to give an  
+%The package contains a number of complete examples on robust controller design and simulation of PDE models
+%%. The types of models (at the moment) include
+%of the following types:
+%\begin{itemize}
+%  \item one-dimensional diffusion equations with either boundary or distributed control and observation.
+%  \item two-dimensional heat equation on a rectangular domain.
+%  \item one-dimensional wave equations with either distributed or boundary control and observation.
+%    \COMMapproxRC{
+%    \item two-dimensional wave equation on an annulus with boundary control and observation
+%    }
+%\end{itemize}
+%New examples will also be added in the future versions of the package.
+%%This collection of examples will also be expanded in the future.
+%%and a collection of examples on robust output tracking and disturbance rejection for distributed parameter systems.
+%
+%The purpose of this document is to give a general introduction to the background theory of robust output regulation for linear PDE systems, to describe the mathematical models that are included as the example cases, and to document the usage of the software package on a general level.
+% 
+%The purpose of \RORname\ is to serve as a tool to \textit{illustrate} the theory of robust output regulation for distributed parameter systems and it should not (yet) be considered as a serious controller design software. 
+%The developers of the software do not take any responsibility and are not liable for any damage caused through use of this software.
+%In addition, at its present stage, the library is not optimized in terms of numerical accuracy. Any helpful comments on potential improvements of the numerical aspects will be greatly appreciated!
+%
+%The \RORname\ software is distributed as open source under the GNU General Public License version 3 (see \texttt{LICENSE.txt} for detailed license and copyright information) and can freely downloaded at the address
+%\begin{center}
+%  \href{https://github.com/lassipau/rorpack/}{https://github.com/lassipau/rorpack/}
+%\end{center}
+%\shorten{
+%  This document is published in Arxiv (\href{http://arxiv.org/}{http://arxiv.org/}).
+%}
+%All comments and suggestions for improvements are welcome! These can be sent directly to \texttt{\href{mailto:lassi.paunonen@tuni.fi}{lassi.paunonen@tuni.fi}}.
+%
+%\subsection{Controller design and simulation workflow}
+%
+%Basic workflow for robust controller design and simulation for a given system is that the user creates a main file with the following parts:
+%\begin{enumerate}
+%%  \item Create a main file for the simulation. 
+%%    The file includes the following parts in the given order.
+%  \item Calling of user-defined Python routines that return a numerical approximation of the linear PDE model.
+%  \item Defining the reference and disturbance signals to be considered.
+%  \item Calling of a \RORname\ routine for construction of a robust controller that is suitable for the type of PDE model.
+%    This typically involves choosing appropriate parameters for the controller construction.
+%  \item Calling of \RORname\ routines for construction and simulation of the closed-loop system. The routines return numerical data describing the output, the error, the control signal, and the closed-loop state.
+%  \item Calling of \RORname\ routines for visualising the behaviour of the output and the output error, as well as 
+%    user-defined routines for illustrating the behaviour of the state of the controlled PDE system (multidimensional plots or animations).
+%\end{enumerate}
+%The example cases included in \RORname\ are built around main files that follow the same structure, and the users are encouraged to implement their own simulations by modifying the example codes.
+%
+%It is also possible to combine other Python numerical software packages in the study of robust controller design for PDE models in order to employ ready-made numerical approximations or additional numerical methods in the computation of required controller parameters. This approach is illustrated in one of the PDE example cases ``\texttt{heat\_1d\_2}'' described in Section~\ref{sec:Heat1D2} (Case~2). 
+%In this example the transfer function of the controlled PDE and other parameters used in the controller construction are computed with the \textbf{Chebfun package}~\cite{DriHal14book,Tre13book} (\href{https://chebfun.org/}{https://chebfun.org/}) which provides flexible tools for solution of differential equations with extreme accuracy using spectral methods. 
+%
+%\section{Introduction to Robust Output Regulation}
+%
+%In this section we give a general introduction to the mathematical theory of \keyterm{robust output regulation}.
+%The purpose of the \RORname\ package is to illustrate controller design for linear distributed parameter systems of the form
+%\begin{subequations}
+%  \label{eq:plantintro}
+%  \eqn{
+%  \dot{x}(t)&=Ax(t)+Bu(t) + B_d\wdist(t), \qquad x(0)=x_0\in X\\
+%  y(t)&=\CL x(t)+Du(t) + D_d\wdist(t)
+%  } 
+%\end{subequations}
+%on a Banach or a Hilbert space $X$.
+%Controlled linear PDE models describing diffusion-convection phenomena, waves and vibrations and elastic deformations can be written in this form with a suitable differential operator~$A$~\cite{CurZwa95book,TucWei09book,JacZwa12book}. 
+%%generating a \keyterm{strongly continuous semigroup} on $X$.
+%In our main control problem the goal is to design a dynamic error feedback controller in such a way that the output $y(t)$ of the system converges to a given reference signal $\yref(t)$ despite the external disturbance signal $\wdist(t)$. In addition, the controller needs to be \keyterm{robust} in the sense that it achieves the output tracking and disturbance rejection even if the parameters $(A,B,B_d,C,D,D_d)$ are perturbed or contain small uncertainties.
+%
+%Our main emphasis is on robust output regulation of linear partial differential equations, especially \keyterm{diffusion-convection equations}, \keyterm{wave equations}, and \keyterm{beam and plate equations}. However, the \RORname\ package can also be used for construction of controllers for  finite-dimensional systems with given matrices $(A,B,B_d,C,D,D_d)$. 
+%
+%The full robust output regulation problem is defined in the following way. 
+%
+%\medskip
+%
+%\begin{RORP}
+%  Given a reference signal $\yref(t)$, design a dynamic error feedback controller such that the output $y(t)$ of the system converges to the reference signal asymptotically, i.e.,
+%  \eqn{
+%    \label{eq:errconv}
+%    \lim_{t\to \infty}\; \norm{y(t)-\yref(t)}_Y=0
+%  }
+%  despite the disturbance signal $\wdist(t)$.
+%  Moreover, the controller is required to
+%%  achieve closed-loop stability and to
+%be \keyterm{robust} in the sense that it achieves the convergence of the output~\eqref{eq:errconv} even under small uncertainties and changes in the parameters $(A,B,B_d,C,$ $D,D_d)$ of the system.
+%\end{RORP}
+%
+%The reference signal $\yref(t)$ and the  disturbance signals $\wdist(t)$ are assumed to be of the form
+%\begin{subequations}
+%  \label{eq:yrefwdist}
+%  \eqn{
+%    \yref(t) &= a_0^1 + \sum_{k=1}^q (a_k^1 \cos(\gw_k t) + b_k^1 \sin(\gw_k t))\\
+%    \wdist(t) &= a_0^2 + \sum_{k=1}^q (a_k^2 \cos(\gw_k t) + b_k^2 \sin(\gw_k t))
+%  }
+%\end{subequations}
+%for some \textbf{known frequencies} $\set{\gw_k}_{k=0}^q\subset \R$ with $0=\gw_0<\gw_1<\ldots<\gw_q$ and unknown amplitudes $\set{a_k^j}_{k,j},\set{b_k^j}_{k,j}\subset \R$ (some of which may zero). 
+%
+%Dynamic feedback is essential for achieving robust output regulation, and the control problem can indeed be solved with a dynamic error feedback controller (see Figure~\ref{fig:FBcontrol}). The classical \keyterm{internal model principle} gives a characterization for the controllers that solve the robust output regulation problem. This fundamental result was first introduced for finite-dimensional linear systems in the 1970's by Francis and Wonham~\cite{FraWon75a} and Davison~\cite{Dav76} (see~\citel{Hua04book}{Ch. 1} for an excellent overview).
+%The internal model principle was later extended for infinite-dimensional linear systems in by the Systems Theory Research Group at Tampere, Finland in the references~\cite{Imm06phd,PauPoh10,Pau11phd,PauPoh14a,Pau16a}\footnote{Our focus is on linear systems, but there is also an extensive literature on the internal model principle for nonlinear systems, see, e.g.,~\cite{Hua04book,ByrIsi03,ByrIsi04} and references therein.}.
+%
+%
+%\begin{figure}[h!]
+%  \begin{center}
+%    \includegraphics[width=.75\linewidth]{FB-control-scheme-horizontal-slim-notation} 
+%%    \begin{overpic}[width=\linewidth]{FB-control-scheme-horizontal-slim} 
+%%      \put(67,10.5){\mbox{System}}
+%%      \put(24.5,10.5){\mbox{Controller}}
+%%      \put(75,21){\mbox{\small$w_{\textit{\tiny dist}}(t)$}}
+%%      \put(50,14.5){\mbox{\small$u(t)$}}
+%%      \put(92,14.5){\mbox{\small$y(t)$}}
+%%      \put(11.5,14.5){\mbox{\small$e(t)$}}
+%%      \put(5.5,8){\mbox{\small$-$}}
+%%      \put(0,14.5){\mbox{\small$y_{\textit{\tiny ref}}(t)$}}
+%%    \end{overpic}
+%    \caption{Dynamic error feedback control scheme.}
+%    \label{fig:FBcontrol}
+%  \end{center}
+%\end{figure}
+%
+%The internal model principle~\cite[Thm. 6.9]{PauPoh10} is also the most important tool in designing controllers for robust output regulation. The result states that a controller solves the robust output regulation problem if and only if the following conditions are satisfied.
+%\begin{itemize}
+%  \item The error feedback controller incorporates ``an internal model'' of
+%    the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}.
+%  \item The closed-loop system is exponentially or strongly stable.
+%\end{itemize}
+%In controller design, the the internal model property can be guaranteed by choosing a suitable \keyterm{structure} for the controller. The rest of parameters are subsequently chosen in order to stabilize the closed-loop system.
+%
+%
+%
+%The detailed description of the theory of robust output regulation problem and the internal model principle  can be found in the references listed below references. The main emphasis in the list is (shamelessly) on the publications by the Systems Theory Research Group at Tampere University, Finland.
+%\begin{itemize}
+%  \item \cite{Poh82,XuJer95,HamPoh96a,LogTow97,HamPoh00,RebWei03,LogTow03,ImmPoh06b,Imm07a,DosBas08,BouIdr09,HamPoh10,HamPoh11,PauPoh13a,XuSal14} (including PI-control for PDE models): Robust controller design in various forms for infinite-di\-men\-sional linear systems.
+%  \item \cite{PauPoh10} and~\cite{PauPoh14a}: The Internal Model Principle for infinite-dimensional linear systems with bounded and unbounded, respectively, input and output operators $B$ and $C$.
+%  \item \cite{Pau16a,Pau17b}: Robust controller design for \keyterm{regular linear systems}.
+%  \item \cite{HumPau18,HumKur18}: Robust controller design for \keyterm{port-Hamiltonian systems} and other boundary controlled partial differential equations.
+%  \item \cite{RebWei03,Pau17carxiv,PauLeGLHMNC18}: Robust controller design \keyterm{impedance passive systems}.
+%  \item \cite{PauPha18arxiv} for robust finite-dimensional low-order controller design for parabolic systems using Galerkin approximations and model reduction.
+%  \item References on the output regulation \keyterm{without} the robustness requirement:~\cite{Poh81a,Sch83b,ByrLau00,Deu11,NatGil14,XuDub17a}
+%\end{itemize}
+%
+%The constructed controllers are of the form
+%\begin{subequations}
+%  \label{eq:controller}
+%  \eqn{
+%    \dot{z}(t)&=\mc{G}_1  z(t) + \mc{G}_2 (y(t)-\yref(t)),\qquad z(0)=z_0\in Z\\
+%    u(t) &= K z(t) +D_c (y(t)-\yref(t)).
+%  }
+%\end{subequations}
+%Here $y(t)-\yref(t)$ is the \keyterm{regulation error}.
+%The construction of the robust controllers are based on the references~\cite{Pau16a,Pau17carxiv} with certain modifications and improvements. In particular, the internal models are defined in their ``real forms'', making the controller real whenever the parameters of the plant are real. The same controllers also achieve robust output tracking also for reference and disturbance signals with complex coefficients $\set{a_k^j}_{k,j},\set{b_k^j}_{k,j}\subset \C$.
+%
+%The constructions of the robust controllers use the knowledge of the frequencies $\set{\gw_k}_k $ of the reference and disturbance signals, the number of outputs $p:=\dim Y$ of the system~\eqref{eq:plantintro}, and certain knowledge of the system. In particular, the ``minimal controllers'' require knowledge of the values $P(i\gw_k)$ of the transfer function $P(\gl)=\CL R(\gl,A)B+D$ of the system at the complex frequencies $\set{i\gw_k}_k\subset i\R$ of the reference and disturbance signals~\eqref{eq:yrefwdist}.
+%The other controller structures also use knowledge of the parameters $(A,B,C,D)$ of the system as they involve designing an observer for~\eqref{eq:plantintro}, and require stabilizing feedback and output injection operators. See Section~\ref{sec:ControllerTypes} for more information on the controller-specific requirements.
+
+\section{Using the Software (Python version)}
+\label{sec:Usage}
 
 The \texttt{rorpack} Python library can be installed for Python 2 or Python 3 as instructed in the \texttt{README.md} file included in the software package (this mainly involves downloading the source codes and typing '\texttt{pip install .}' or '\texttt{pip3 install .}' in the main directory). The subdirectory \texttt{examples/} contains the included PDE examples and simulation files (documented in detail in Section~\ref{sec:PDEcases}).
 
@@ -519,22 +711,35 @@ In this section we list the concrete controllers implemented in \RORname.
 The documentation of the code includes additional information on the usage of the construction routines.
 The controllers are the following:
 \begin{itemize}
-  \item The ``minimal robust controller'' (including only the internal model), based on references~\cite{HamPoh00},~\citel{Pau16a}{Sec. IV}. Stabilization of the closed-loop system is based on selection of a suitable \keyterm{low-gain parameter} $\eps>0$.\\[1ex]
-      Calling sequence for the construction:\\[-1ex]
+  \item The ``Low-Gain (Minimal) Robust Controller'' (including only the internal model), based on references~\cite{HamPoh00,RebWei03},~\citel{Pau16a}{Sec. IV}. Stabilization of the closed-loop system is based on selection of a suitable \keyterm{low-gain parameter} $\eps>0$. This controller can be used for systems which are exponentially stable (or stabilizable with output feedback).\\[1ex]
+      Calling sequence for the construction:\\[-2ex]
      \begin{quotation}
-       \texttt{LowGainRC(sys,freqsReal,epsgain,Pvals)}
+       \texttt{LowGainRC(sys,freqsReal,epsgain,Pvals,Dc)}
      \end{quotation}
      \medskip
-     where \texttt{sys} contains the parameters of the plant, \texttt{freqs} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{epsgain} is the value of the low-gain parameter $\eps>0$. Finally, \texttt{Pvals} is a $(q+1)\times p\times m$ array containing the values $P(i\gw_k)=\CL R(i\gw_k,A)B+D\in \C^{p\times m}$ of the transfer function of~\eqref{eq:plantintro} at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of the reference and disturbance signals in~\eqref{eq:yrefwdist}.
-     The parameter \texttt{epsgain} can alternatively be a vector of length 2 providing minimal and maximal values for $\eps$. The controller construction has a naive functionality for finding an $\eps$ to optimize stability margin of the numerically approximated closed-loop system (simply by starting from the minimal value and increasing $\eps$ in steps). 
+     where \texttt{sys} contains the parameters of the plant, \texttt{freqsReal} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{epsgain} is the value of the low-gain parameter $\eps>0$. 
+The (optional) parameter \texttt{Dc} is the feedthrough matrix $D_c$ of the controller~\eqref{eq:controller}. Since the controller feedthrough 
+ is equivalent to a ``preliminary'' output feedback  $u(t)=D_c y(t)+ \tilde{u}(t)$ to the system (plus an additional disturbance term), for unstable systems the parameter \texttt{Dc} should be an output feedback matrix which stabilizes the system exponentially. 
+If \texttt{Dc} is not given, the controller will by default have zero feedthrough.
+
+The parameter \texttt{Pvals} is a is a Matlab cell array of length $q+1$ containing transfer function values $P_{D_c}(i\gw_k)\in \C^{p\times m}$ at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of $\wdist(t)$ and $\yref(t)$. Here $P_{D_c}(\gl)$ is the transfer function of the system $(A^{D_c},B^{D_c},C^{D_c},D^{D_c})$ which is obtained from $(A,B,C,D)$ with output feedback $u(t)=D_c y(t)+ \tilde{u}(t)$.
+The values have the theoretical formula
+ $$P_{D_c}(i\gw_k)=\CL^{D_c} R(i\gw_k,A^{D_c})B^{D_c}+D^{D_c},$$
+ but they can also be computed via a solution of a boundary value problem, or measured from the response of a physical model. 
+If the
+transfer function $P(\gl)$ of $(A,B,C,D)$ is well-defined at
+$iw_k$, then $P_{D_c}(i\gw_k)$ can be computed with the formula 
+$P_{D_c}(i\gw_k) = (I-P(i\gw_k)Dc)\inv P(i\gw_k)$, and if $D_c=0$, then 
+$P_{Dc}(i\gw_k) = P(i\gw_k)$. See Section~\ref{sec:ContrParameterComments} for additional comments.
+% of the transfer function of~\eqref{eq:plantintro} at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of the reference and disturbance signals in~\eqref{eq:yrefwdist}.
 
      \bigskip
 
-  \item The ``observer-based robust controller'', based on references~\citel{HamPoh10}{Sec. 7},~\citel{Pau16a}{Sec. VI},~\citel{Pau17b}{Sec. 5}. The closed-loop stability is achieved using an observer for the state of the system~\eqref{eq:plantintro}.\\[1ex]
+  \item The ``Observer Based Robust Controller'', based on references~\citel{HamPoh10}{Sec. 7},~\citel{Pau16a}{Sec. VI},~\citel{Pau17b}{Sec. 5}. The closed-loop stability is achieved using an observer for the state of the system~\eqref{eq:plantintro}.\\[1ex]
       Calling sequence for the construction:\\[-1ex]
      \begin{quotation}
        \texttt{ObserverBasedRC(sys,freqsReal,K21,L,\\ 
-	 \phantom{a}\hspace{2.7cm} IMstabmargin,IMstabmethod,CKRKvals)}
+	 \phantom{a}\hspace{3.7cm} IMstabmargin,IMstabmethod)}
      \end{quotation}
      \medskip
      where \texttt{sys} contains the parameters of the plant, \texttt{freqsReal} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}.
@@ -565,15 +770,15 @@ can be chosen to correspond to the Galerkin approximations of $Q_1=q_1 I$ and $Q
 
 The model reduction dimension parameter \texttt{ROMorder} corresponds to $r$ in~\citel{PauPha20}{Sec.~III.A} and it determines the final reduced order dimension of the observer part of the controller. The model reduction step can be skipped completely by setting \texttt{ROMorder=NaN}. The size of the parameter should be determined to be sufficiently high so that the closed-loop system is exponentially stable. The result~\citel{PauPha20}{Thm.~III.1} guarantees that closed-loop stability for the original PDE plant and the reduced order controller is achieved if both the Galerkin approximation order $N$ and the model reduction parameter $r\geq N$ are sufficiently high, but (at the moment) there are no concrete lower bounds for these values. Typically, if the decay of the Hankel singular values of $(A^N,B^N,C^N)$ are sufficiently fast, it is possible to achive the closed-loop stability with a fairly small model reduction parameter $r$.
 
-Note that the use of this controller requires the Python Control Systems Library, which in turn requires the Python slycot library. Installation of the slycot library can be cumbersome especially on the Microsoft Windows operating system. A conda environment is recommended for this with further instructions on installing the package provided on the slycot project web page \href{https://pypi.org/project/slycot/}{https://pypi.org/project/slycot/}.
+The use of this controller requires the Python Control Systems Library, which in turn requires the Python \texttt{slycot} library. Installation of the \texttt{slycot} library can be cumbersome especially on Microsoft Windows, and the use of a ``\texttt{conda}'' environment is recommended. For further instructions on installing the this library are provided on the \texttt{slycot} project web page \href{https://pypi.org/project/slycot/}{https://pypi.org/project/slycot/}.
 
 	\bigskip
 
-  \item The ``dual observer-based robust controller'', based on references~\citel{Pau16a}{Sec. V},~\citel{Pau17b}{Sec. 4}. The closed-loop stability is achieved using a complementary controller structure that coincides with observer-based stabilization of the dual of the closed-loop system.\\[1ex]
+  \item The ``Dual Observer Based Robust Controller'', based on references~\citel{Pau16a}{Sec. V},~\citel{Pau17b}{Sec. 4}. The closed-loop stability is achieved using a complementary controller structure that coincides with observer-based stabilization of the dual of the closed-loop system.\\[1ex]
       Calling sequence for the construction:\\[-1ex]
      \begin{quotation}
        \texttt{DualObserverBasedRC(sys,freqsReal,K2,L1,\\
-	 \phantom{a}\hspace{2.7cm} IMstabmargin,IMstabmethod,RLBLvals)}
+	 \phantom{a}\hspace{3.7cm} IMstabmargin,IMstabmethod)}
      \end{quotation}
      \medskip
      where \texttt{sys} contains the parameters of the plant, \texttt{freqs} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}. The parameters \texttt{K2} and \texttt{L1} describe operators $K_2$ and $L_1$, respectively, such that $A+BK_2^\Lambda$ and $A+L_1\CL$ generate exponentially stable semigroups. 
@@ -582,19 +787,43 @@ Note that the use of this controller requires the Python Control Systems Library
 
 	\bigskip
 
-  \item The ``passive minimal controller'' based on~\citel{RebWei03}{Thm. 1.2},~\citel{Pau17carxiv}{Sec. 5.1},~\cite{PauLeGLHMNC18}. The closed-loop stability is achieved using passive controller design and a \keyterm{power preserving interconnection} between the passive systems.\\[1ex]
+  \item The ``Passive (Minimal) Robust Controller'' based on~\citel{RebWei03}{Thm. 1.2},~\citel{Pau19}{Sec. 5.1},~\cite{PauLeG22}. 
+The controller can be used for \emph{impedance passive} linear systems which are either exponentially or strongly stable, or stabilizable with output feedback.
+The controller design is based on forming a \keyterm{power preserving interconnection} between the passive system and the controller  to achieve closed-loop stability.\\[1ex]
       Calling sequence for the construction:\\[-1ex]
      \begin{quotation}
 	 \texttt{PassiveRC(freqsReal,dim\_Y,epsgain,sys,Dc)}
      \end{quotation}
      \medskip
      where
-     \texttt{freqsReal} contains the (real) frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{dim\_Y} is the dimension of the output space, \texttt{epsgain} is a parameter $\eps>0$ which controls the norm of $G_2$ and $K$,
-     and \texttt{sys} contains the parameters of the plant. The parameter \texttt{Dc} is the controller feedthrough matrix which can be used as a ``prestabilizing'' output feedback to the system (a negative definite \texttt{Dc} corresponds to prestabilizing negative output feedback to the system). 
-     In addition, \texttt{Pvals} is a $(q+1)\times p\times m$ array containing the values $P(i\gw_k)=\CL R(i\gw_k,A)B+D\in \C^{p\times m}$ of the transfer function of~\eqref{eq:plantintro} at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of the reference and disturbance signals in~\eqref{eq:yrefwdist}. The parameter \texttt{Pvals} is optional and it is currently not used in the controller design.
-     In future versions of the implementation this information may be used to improve the performance of the controller.
+     \texttt{freqsReal} contains the (real) frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{dim\_Y} is the dimension of the output space, and  \texttt{epsgain} is a scalar parameter $\eps>0$ which (linearly) scales the norms of $K$ and $G_2$.
 
-The parameter \texttt{epsgain} can alternatively be a vector of length 2 providing minimal and maximal values for $\eps$. The controller construction has a naive functionality for finding an $\eps$ to optimize stability margin of the numerically approximated closed-loop system (simply by starting from the minimal value and increasing $\eps$ in steps). 
+
+The parameter \texttt{epsgain} can alternatively be a vector of length 2 providing minimal and maximal values for $\eps$. The controller construction has a naive functionality for finding an $\eps$ to optimize stability margin of the numerically approximated closed-loop system (simply by starting from the minimal value and increasing $\eps$ in steps). In this case, the parameter \texttt{Sys} (containing the parameters of the plant) is used for this optimization.
+
+The optional parameter \texttt{Dc}, which is either $\dim Y\times \dim Y$-matrix or a scalar, is the feedthrough matrix $D_c$ 
+for the controller. The closed-loop structure implies that a nonzero feedthrough term $D_c$ is equivalent to a 
+ ``preliminary'' output feedback  $u(t)=D_c y(t)+ \tilde{u}(t)$ to the system (plus an additional disturbance term). For unstable systems the parameter \texttt{Dc} should be an output feedback matrix which stabilizes the system either exponentially or strongly, and in particular,
+for exactly or approximately controllable unstable passive systems \texttt{Dc} can be any negative definite matrix.
+If \texttt{Dc} is not given, the controller will by default have zero feedthrough.
+If \texttt{Dc} is a scalar, the parameter is
+interpreted as ``\texttt{Dc} times identity''.
+
+It should be noted that the controller construction routine does not test passivity, and for a non-passive system the resulting closed-loop system will typically be unstable.
+
+%  \item The ``Passive (Minimal) Robust Controller'' based on~\citel{RebWei03}{Thm. 1.2},~\citel{Pau17carxiv}{Sec. 5.1},~\cite{PauLeGLHMNC18}. The closed-loop stability is achieved using passive controller design and a \keyterm{power preserving interconnection} between the passive systems.\\[1ex]
+%      Calling sequence for the construction:\\[-1ex]
+%     \begin{quotation}
+%	 \texttt{PassiveRC(freqsReal,dim\_Y,epsgain,sys,Dc)}
+%     \end{quotation}
+%     \medskip
+%     where
+%     \texttt{freqsReal} contains the (real) frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{dim\_Y} is the dimension of the output space, \texttt{epsgain} is a parameter $\eps>0$ which controls the norm of $G_2$ and $K$,
+%     and \texttt{sys} contains the parameters of the plant. The parameter \texttt{Dc} is the controller feedthrough matrix which can be used as a ``prestabilizing'' output feedback to the system (a negative definite \texttt{Dc} corresponds to prestabilizing negative output feedback to the system). 
+%     In addition, \texttt{Pvals} is a $(q+1)\times p\times m$ array containing the values $P(i\gw_k)=\CL R(i\gw_k,A)B+D\in \C^{p\times m}$ of the transfer function of~\eqref{eq:plantintro} at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of the reference and disturbance signals in~\eqref{eq:yrefwdist}. The parameter \texttt{Pvals} is optional and it is currently not used in the controller design.
+%     In future versions of the implementation this information may be used to improve the performance of the controller.
+%
+%The parameter \texttt{epsgain} can alternatively be a vector of length 2 providing minimal and maximal values for $\eps$. The controller construction has a naive functionality for finding an $\eps$ to optimize stability margin of the numerically approximated closed-loop system (simply by starting from the minimal value and increasing $\eps$ in steps). 
 
 
 
@@ -608,7 +837,9 @@ The parameter \texttt{epsgain} can alternatively be a vector of length 2 providi
 %  \item TODO: Implement Galerkin-ROM controllers for parabolic systems.
 \end{itemize}
 
+
 \subsection{Comments on the Controller Parameters}
+\label{sec:ContrParameterComments}
 
 In this section we make some remarks on the choices of the controller parameters.
 
@@ -618,11 +849,29 @@ In the example cases we are mainly interested in finding an $\eps>0$ which achie
 
 The gain in the passive robust controller \texttt{PassiveRC} can analogously be adjusted with a choice of a parameter $\eps>0$ to optimize the closed-loop stability margin.
 
-\textbf{The transfer function values.} The controllers make use of the values $P(i\gw_k)$, $P_K(i\gw_k)$ and $P_L(i\gw_k)$ of the transfer functions associated to the original or stabilized versions of the PDE system.
-The \RORname\ class \texttt{LinearSystem} has the necessary routines for computing these values based on the matrices \texttt{A}, \texttt{B}, \texttt{C}, and \texttt{D}. However, using the same approximation of the PDE for both controller design and simulation corresponds to essentially controlling the approximation as a finite-dimensional system. If possible, to avoid unrealistically positive results, it is therefore better to use two different approximations for controller construction and simulation. This is especially the case if the validity of the approximation for the computation of the parameters can not be guaranteed with absolute certainty. However, there are of course cases, such as parabolic systems with the Galerkin approximations~\cite{Mor94}, where the values of the controller parameters can be shown to converge with the order of the approximation, and above concerns are unnecessary.
-The same comments apply to the parameters \texttt{CKRKvals} and \texttt{RLBLvals}.
+\textbf{The transfer function values.} The controllers make use of the values  $P_{D_c}(i\gw_k)$ (or $P(i\gw_k)$)
+%, $P_K(i\gw_k)$ and $P_L(i\gw_k)$ 
+of the transfer functions associated to the original or stabilized versions of the PDE system.
+Once the system \texttt{sys} is defined, the simplest (and most tempting) approach is to compute these values as the transfer function values of the system \texttt{sysFB} which is 
+%\begin{quotation}
+%\texttt{
+%sysFB.C*((1i*wk*eye(dimX)-sysFB.A)$\setminus$sysFB.B) + sysFB.D
+%}
+%\end{quotation}
+%where the approximation
+% \texttt{sysFB} 
+%of $(A^{D_c},B^{D_c},C^{D_c},D^{D_c})$ is 
+computed from \texttt{sys} as an output feedback with 
+\texttt{sysFB = sys.output\_feedback(Dc)}.
+%, and \texttt{dimX=sysFB.A.shape[0]}.
+%In the Python version of \RORname\ The \RORname\ class \texttt{LinearSystem} has the necessary routines for computing these values based on the matrices \texttt{A}, \texttt{B}, \texttt{C}, and \texttt{D}. 
+However, using the same approximation of the PDE for both controller design and simulation corresponds to essentially controlling the approximation \emph{as a finite-dimensional system}. If possible, to avoid unrealistically positive results, it is therefore better to use two different approximations for controller construction and simulation. This is especially the case if the validity of the approximation for the computation of the parameters can not be guaranteed with absolute certainty. However, there are of course cases, such as in Galerkin approximations of parabolic systems~\cite{Mor94}, where the values of the controller parameters can be shown to converge with the order of the approximation, and the above concerns are at least for the most part unnecessary.
+In the Matlab version, the observer based controllers do not (at least currently) use the transfer functions for the construction of the controllers.
+For simplicity, several built-in examples in \RORname\ still use \texttt{sys} for computing \texttt{Pvals}, and the user is encouraged to replace these computations with other approximation methods!
 
-For some special PDEs, such as 1D heat or wave equations with constant coefficients, the values $P(i\gw_k)$ may have explicit expressions, but these are very limited special cases. For PDEs with spatially varying parameters there are powerful computational methods that can be used to determine $P(i\gw_k)$, such as the \textbf{Chebfun} package (\href{https://chebfun.org/}{https://chebfun.org/}) employed in \texttt{heat\_1d\_2.py} in Section~\ref{sec:Heat1D2} (``Case 2'').
+For some special PDEs, such as 1D heat or wave equations with constant coefficients, the values $P(i\gw_k)$ may have explicit expressions, but these are very limited special cases. 
+%But since the transfer functions of a PDE system can be obtained from solutions of a 
+ For PDEs with spatially varying parameters there are powerful computational methods that can be used to determine $P(i\gw_k)$, such as the \textbf{Chebfun} package (\href{https://chebfun.org/}{https://chebfun.org/}) employed in \texttt{heat\_1d\_2.py} in Section~\ref{sec:Heat1D2} (``Case 2'').
 
 
 
@@ -630,7 +879,6 @@ For some special PDEs, such as 1D heat or wave equations with constant coefficie
 \label{sec:PDEcases}
 
 In this section we introduce the PDE models considered in the example cases and review their fundamental properties.
-
 The considered reference and disturbance signals are in each case combinations of trigonometric functions of the form~\eqref{eq:yrefwdist} with a given set of frequencies. The precise choices of the signals can be seen from the main files of the examples. Similarly, the chosen initial states are visible from the source files, and in several files alternative initial states are provided (these can be used by uncommenting the corresponding lines).
 
 \subsection{The 1D Heat Equations}
@@ -977,8 +1225,17 @@ In the simulations the system is approximated using the orthonormal eigenfunctio
   %The system is passive
 }
 
-\subsection{A Controlled Beam Equation}
+\subsection{The Controlled Beam Equations}
 \label{sec:ControlledBeams}
+
+
+The following examples study controller design for controlled beam equation models.
+
+
+\medskip
+
+\subsubsection*{Example: A Timoshenko beam with collocated in-domain control and observation}
+~\\[-1ex]
 
 \medskip
 
@@ -1049,10 +1306,13 @@ Figure~\ref{fig:BeamTim1} shows the outputs of the simulation example.
 
 \begin{itemize}
   \item \href{https://sysgrouptampere.wordpress.com}{https://sysgrouptampere.wordpress.com} --- Systems Theory Research Group at Tampere University.
+  \item  \href{https://github.com/lassipau/rorpack/}{https://github.com/lassipau/rorpack/} --- RORPack for Python
+  \item  \href{https://github.com/lassipau/rorpack-matlab/}{https://github.com/lassipau/rorpack-matlab/} --- RORPack for Matlab
+\item \href{https://lassipau.github.io/rorpack/}{https://lassipau.github.io/rorpack/}  --- RORPack homepage (hosted by GitHub Pages)
   \item \href{http://mathesaurus.sourceforge.net/matlab-numpy.html}{http://mathesaurus.sourceforge.net/matlab-numpy.html} --- Useful information on differences in the Matlab and Python/Numpy syntax for vectors and matrices.
   \item \href{https://chebfun.org}{https://chebfun.org} --- Homepage of the Chebfun Project.
-  \item \href{https://github.com/python-control/python-control}{https://github.com/python-control/python-control} --- The Python Control Systems Library
 \end{itemize}
+
 
 \shorten{
 
