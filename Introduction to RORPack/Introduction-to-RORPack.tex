@@ -177,7 +177,7 @@ The package contains functionality for automated construction of robust internal
 \section*{Download links}
 
 
-Both the Python and Matlab versions of \RORname\ software are distributed as open source under the GNU General Public License version 3 (see \texttt{LICENSE.txt} for detailed license and copyright information) and can freely downloaded at the addresses
+Both the Python and Matlab versions of \RORname\ software are distributed as open source under the GNU General Public License version 3 (see \texttt{LICENSE.txt} for detailed license and copyright information) and can be freely downloaded at the addresses
 \begin{flushleft}
  \hspace{1.6cm} \href{https://github.com/lassipau/rorpack/}{https://github.com/lassipau/rorpack/} \hspace{1.4cm} (Python version)\\
  \hspace{1.6cm}  \href{https://github.com/lassipau/rorpack-matlab/}{https://github.com/lassipau/rorpack-matlab/} \hspace{.1cm} (Matlab version)
@@ -228,7 +228,7 @@ Basic workflow for robust controller design and simulation for a given system is
 \begin{enumerate}
 %  \item Create a main file for the simulation. 
 %    The file includes the following parts in the given order.
-  \item Calling of a user-defined Matlab function that returns a numerical approximation of the linear PDE model. In the provided examples this function is in a separate file with the prefix ``Constr''.
+  \item Calling of a user-defined Matlab function that returns a numerical approximation of the linear PDE model. In the provided examples this function is in the example file with the prefix ``construct\_''.
   \item Defining the reference and disturbance signals to be considered.
   \item Calling of a \RORname\ routine for construction of a ``robust controller'' that is suitable for the type of the PDE model.
     This also involves defining the parameters of the controller construction.
@@ -722,7 +722,7 @@ The (optional) parameter \texttt{Dc} is the feedthrough matrix $D_c$ of the cont
  is equivalent to a ``preliminary'' output feedback  $u(t)=D_c y(t)+ \tilde{u}(t)$ to the system (plus an additional disturbance term), for unstable systems the parameter \texttt{Dc} should be an output feedback matrix which stabilizes the system exponentially. 
 If \texttt{Dc} is not given, the controller will by default have zero feedthrough.
 
-The parameter \texttt{Pvals} is a is a Matlab cell array of length $q+1$ containing transfer function values $P_{D_c}(i\gw_k)\in \C^{p\times m}$ at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of $\wdist(t)$ and $\yref(t)$. Here $P_{D_c}(\gl)$ is the transfer function of the system $(A^{D_c},B^{D_c},C^{D_c},D^{D_c})$ which is obtained from $(A,B,C,D)$ with output feedback $u(t)=D_c y(t)+ \tilde{u}(t)$.
+The parameter \texttt{Pvals} is an array of length $q+1$ containing transfer function values $P_{D_c}(i\gw_k)\in \C^{p\times m}$ at the complex frequencies $\set{i\gw_k}_{k=0}^q$ of $\wdist(t)$ and $\yref(t)$. Here $P_{D_c}(\gl)$ is the transfer function of the system $(A^{D_c},B^{D_c},C^{D_c},D^{D_c})$ which is obtained from $(A,B,C,D)$ with output feedback $u(t)=D_c y(t)+ \tilde{u}(t)$.
 The values have the theoretical formula
  $$P_{D_c}(i\gw_k)=\CL^{D_c} R(i\gw_k,A^{D_c})B^{D_c}+D^{D_c},$$
  but they can also be computed via a solution of a boundary value problem, or measured from the response of a physical model. 
@@ -770,7 +770,7 @@ can be chosen to correspond to the Galerkin approximations of $Q_1=q_1 I$ and $Q
 
 The model reduction dimension parameter \texttt{ROMorder} corresponds to $r$ in~\citel{PauPha20}{Sec.~III.A} and it determines the final reduced order dimension of the observer part of the controller. The model reduction step can be skipped completely by setting \texttt{ROMorder=NaN}. The size of the parameter should be determined to be sufficiently high so that the closed-loop system is exponentially stable. The result~\citel{PauPha20}{Thm.~III.1} guarantees that closed-loop stability for the original PDE plant and the reduced order controller is achieved if both the Galerkin approximation order $N$ and the model reduction parameter $r\geq N$ are sufficiently high, but (at the moment) there are no concrete lower bounds for these values. Typically, if the decay of the Hankel singular values of $(A^N,B^N,C^N)$ are sufficiently fast, it is possible to achive the closed-loop stability with a fairly small model reduction parameter $r$.
 
-The use of this controller requires the Python Control Systems Library, which in turn requires the Python \texttt{slycot} library. Installation of the \texttt{slycot} library can be cumbersome especially on Microsoft Windows, and the use of a ``\texttt{conda}'' environment is recommended. For further instructions on installing the this library are provided on the \texttt{slycot} project web page \href{https://pypi.org/project/slycot/}{https://pypi.org/project/slycot/}.
+The use of this controller requires the Python Control Systems Library, which in turn requires the Python \texttt{slycot} library. Installation of the \texttt{slycot} library can be cumbersome especially on Microsoft Windows, and the use of a ``\texttt{conda}'' environment is recommended. For further instructions on installing the library are provided on the \texttt{slycot} project web page \href{https://pypi.org/project/slycot/}{https://pypi.org/project/slycot/}.
 
 	\bigskip
 
@@ -781,7 +781,7 @@ The use of this controller requires the Python Control Systems Library, which in
 	 \phantom{a}\hspace{3.7cm} IMstabmargin,IMstabmethod)}
      \end{quotation}
      \medskip
-     where \texttt{sys} contains the parameters of the plant, \texttt{freqs} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}. The parameters \texttt{K2} and \texttt{L1} describe operators $K_2$ and $L_1$, respectively, such that $A+BK_2^\Lambda$ and $A+L_1\CL$ generate exponentially stable semigroups. 
+     where \texttt{sys} contains the parameters of the plant, \texttt{freqsReal} contains the frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}. The parameters \texttt{K2} and \texttt{L1} describe operators $K_2$ and $L_1$, respectively, such that $A+BK_2^\Lambda$ and $A+L_1\CL$ generate exponentially stable semigroups. 
 
      Instead of the approach in~\cite{Pau16a}, the ``internal model'', i.e., the pair $(C_1,G_1)$, in the controller is stabilized using either LQR-based design (\texttt{IMstabmethod = 'LQR'}) or pole placement (\texttt{IMstabmethod = 'poleplacement'}) with a predefined stability margin \texttt{IMstabmargin}. Note that the variable \texttt{IMstabmargin} only determines the stability margin of the internal model, and the stability margin of the closed-loop system also depends on the stability margins of the semigroups generated by $A+BK_2^\Lambda$ and $A+L_1\CL$.
 
@@ -799,9 +799,9 @@ The controller design is based on forming a \keyterm{power preserving interconne
      \texttt{freqsReal} contains the (real) frequencies $\set{\gw_k}_{k=0}^q$ of the signals $\yref(t)$ and $\wdist(t)$ in~\eqref{eq:yrefwdist}, \texttt{dim\_Y} is the dimension of the output space, and  \texttt{epsgain} is a scalar parameter $\eps>0$ which (linearly) scales the norms of $K$ and $G_2$.
 
 
-The parameter \texttt{epsgain} can alternatively be a vector of length 2 providing minimal and maximal values for $\eps$. The controller construction has a naive functionality for finding an $\eps$ to optimize stability margin of the numerically approximated closed-loop system (simply by starting from the minimal value and increasing $\eps$ in steps). In this case, the parameter \texttt{Sys} (containing the parameters of the plant) is used for this optimization.
+The parameter \texttt{epsgain} can alternatively be a vector of length 2 providing minimal and maximal values for $\eps$. The controller construction has a naive functionality for finding an $\eps$ to optimize stability margin of the numerically approximated closed-loop system (simply by starting from the minimal value and increasing $\eps$ in steps). In this case, the parameter \texttt{sys} (containing the parameters of the plant) is used for this optimization.
 
-The optional parameter \texttt{Dc}, which is either $\dim Y\times \dim Y$-matrix or a scalar, is the feedthrough matrix $D_c$ 
+The optional parameter \texttt{Dc}, which is either a $\dim Y\times \dim Y$-matrix or a scalar, is the feedthrough matrix $D_c$ 
 for the controller. The closed-loop structure implies that a nonzero feedthrough term $D_c$ is equivalent to a 
  ``preliminary'' output feedback  $u(t)=D_c y(t)+ \tilde{u}(t)$ to the system (plus an additional disturbance term). For unstable systems the parameter \texttt{Dc} should be an output feedback matrix which stabilizes the system either exponentially or strongly, and in particular,
 for exactly or approximately controllable unstable passive systems \texttt{Dc} can be any negative definite matrix.

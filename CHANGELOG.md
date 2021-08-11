@@ -11,7 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - This Changelog file.
 - Timoshenko beam example from the conference paper by Paunonen, Le Gorrec, and Ramirez at LHMNC 2018.
 - Feedthrough parameter Dc for LowGainRC.
-- Observer-based ROM controller. 
+- Observer-based ROM controller.
+- PassiveRC now accepts scalar feedthrough parameter Dc. If scalar Dc is given, it is interpreted as Dc*I, where I is dim_Y x dim_Y.
 
 ### Changed
 
@@ -20,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Changed the sign of G2 in LowGainRC and PassiveRC accordingly with the above change.
 - Transfer function values PKvals and PLvals inserted to ObserverBasedRC and DualObserverBasedRC and removed from the examples.
 - ObserverBasedRC and DualObserverBasedRC no longer use PKvals or PLvals. Old implementations are still in controller.py.
+- Updated the documentation to match the changes listed here.
 
 ### Removed
 
