@@ -4,7 +4,26 @@ The main changes to "RORPack" are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [Unreleased]
+## [unreleased]
+
+### Added
+
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [v1.0.0]
 
 ### Added 
 
@@ -33,12 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Fixed the simulation of the closed loop system to use the correct matrix CK in determining the control input signal.
 - Floating point rounding handling in heat_1d_3.py.
 
-## [v0.9.0] - 2021-07-07
-
-### Added 
-
-- 
 
 [unreleased]: https://github.com/lassipau/rorpack/tree/dev
-[v0.9.0]: 
+[v1.0.0]: https://github.com/lassipau/rorpack/releases/tag/v1.0.0
 
